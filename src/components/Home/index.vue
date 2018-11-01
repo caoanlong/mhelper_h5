@@ -1,6 +1,10 @@
 <template>
 	<div class="container">
-		<mt-header fixed title="MHelper"></mt-header>
+		<mt-header fixed title="MHelper">
+			<div slot="left" class="logo">
+				<img src="../../assets/logo.png"/>
+			</div>
+		</mt-header>
 		<mt-navbar v-model="selected" class="navbar">
 			<mt-tab-item :id="item.id" v-for="item in tabs" :key="item.id">{{item.name}}</mt-tab-item>
 		</mt-navbar>
@@ -49,7 +53,7 @@ export default {
 			tabs: [],
 			titleList: [
 				{
-					name: '市值',
+					name: '币种',
 					flex: 2
 				},
 				{
@@ -148,6 +152,17 @@ export default {
 	bottom 0
 	padding-top 116px
 	padding-bottom 55px
+	.logo
+		display flex
+		align-items center
+		justify-content center
+		width 32px
+		height 32px
+		border-radius 100%
+		background-color #ffffff
+		img
+			display block
+			width 22px
 	.navbar
 		position fixed
 		top 40px

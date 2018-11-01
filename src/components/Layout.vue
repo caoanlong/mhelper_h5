@@ -3,13 +3,13 @@
         <router-view></router-view>
         <mt-tabbar fixed v-model="selected" v-if="$route.meta.hasTab">
 			<mt-tab-item id="home">
-				<img slot="icon" src="../assets/logo.png">首页
+                <svg-icon slot="icon" style="font-size:22px" icon-class="home"></svg-icon>首页
 			</mt-tab-item>
 			<mt-tab-item id="raiders">
-				<img slot="icon" src="../assets/logo.png">攻略
+				<svg-icon slot="icon" style="font-size:22px" icon-class="raiders"></svg-icon>攻略
 			</mt-tab-item>
 			<mt-tab-item id="mine">
-				<img slot="icon" src="../assets/logo.png">我的
+				<svg-icon slot="icon" style="font-size:22px" icon-class="mine"></svg-icon>我的
 			</mt-tab-item>
 		</mt-tabbar>
     </div>

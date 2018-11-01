@@ -1,9 +1,11 @@
 <template>
     <div class="wrapper">
+        <div class="item first">
+            <img class="coin-icon" :src="marketCoin.image" alt="">
+        </div>
         <div class="item one">
             <div class="up">
                 <div class="market">{{marketCoin.name}}</div>
-                <div class="coin">{{marketCoin.priceUnit}}</div>
             </div>
             <div class="down">
                 <div class="num-title">量</div>
@@ -12,7 +14,7 @@
         </div>
         <div class="item two">
             <div class="up">{{marketCoin.price}}</div>
-            <div class="down">￥{{Number(marketCoin.price) * 7}}</div>
+            <div class="down">￥{{(marketCoin.price).mul(7)}}</div>
         </div>
         <div class="item three">
             <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'">{{marketCoin.change}}%</div>
@@ -40,6 +42,15 @@ export default {
     padding 5px
     background-color #ffffff
     border-bottom 1px solid #ddd
+    .first
+        flex 0 0 50px
+        display flex
+        align-items center
+        justify-content center
+        .coin-icon
+            display block
+            width 30px
+            height 30px
     .one
         flex 1
         .up
@@ -51,12 +62,6 @@ export default {
                 font-weight 500
                 color #333333
                 text-align center
-            .coin
-                float left
-                font-size 12px
-                color #999999
-                text-align center
-                margin-left 5px
         .down
             font-size 12px
             color #999999

@@ -7,10 +7,12 @@ import 'mint-ui/lib/style.css'
 import App from './App'
 import router from './router'
 
-// icon
+// icons
 import './assets/icons'
+import './utils/numberFixed'
 
 Vue.config.productionTip = false
+
 
 Vue.use(MintUI)
 
