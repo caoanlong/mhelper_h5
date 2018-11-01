@@ -12,7 +12,7 @@
         </div>
         <div class="item two">
             <div class="up">{{marketCoin.price}}</div>
-            <div class="down">￥1379.52</div>
+            <div class="down">￥{{Number(marketCoin.price) * 7}}</div>
         </div>
         <div class="item three">
             <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'">{{marketCoin.change}}%</div>
@@ -38,6 +38,7 @@ export default {
     display flex
     height 60px
     padding 5px
+    background-color #ffffff
     border-bottom 1px solid #ddd
     .one
         flex 1
