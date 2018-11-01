@@ -3,5 +3,8 @@ const merge = require('webpack-merge')
 const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
-  NODE_ENV: '"development"'
+	NODE_ENV: '"development"',
+	ENV_CONFIG: '"dev"',
+	BASE_API: '"http://api.app.angel.jyw91.com"',
+	IMG_API: '"http://develop.we-service.cn/hdd/image/"'
 })
