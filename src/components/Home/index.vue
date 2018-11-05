@@ -49,31 +49,20 @@ export default {
 				{ name: '涨幅', flex: 3 }
 			],
 			tableHeight: 0,
-			tableData: [
-				{
-					name:"MTR",1104:"7.05",1103:"4.67",1102:"9.56",1101:"4.21"
-				},{
-					name:"MAT",1104:"7.05",1103:"4.67",1102:"9.56",1101:"4.21"
-				},{
-					name:"DRT",1104:"7.05",1103:"4.67",1102:"9.56",1101:"4.21"
-				},{
-					name:"XRP",1104:"7.05",1103:"4.67",1102:"9.56",1101:"4.21"
-				},{
-					name:"WCG",1104:"7.05",1103:"4.67",1102:"9.56",1101:"4.21"
-				}		
-			],
+			tableData: [],
 			columns: [
 				{
 					field: 'name', title: '币种', width: 96, titleAlign: 'center', columnAlign: 'left',isResize:true, isFrozen: true, componentName: 'table-market'
 				},{
-					field: '1104', title: '今天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				},{
-					field: '1103', title: '昨天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				},{
-					field: '1102', title: '前天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				},{
-					field: '1101', title: '11月01日', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				}
+					field: 'today', title: '今天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
+				},
+				// {
+				// 	field: '1103', title: '昨天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
+				// },{
+				// 	field: '1102', title: '前天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
+				// },{
+				// 	field: '1101', title: '11月01日', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
+				// }
 			]
 		}
 	},
@@ -92,15 +81,13 @@ export default {
 			Coin.find().then(res => {
 				this.tabs = res
 				this.selected = res[0].id
-				this.getMarketList()
 			})
 		},
-		getMarketList(loaded) {
+		getMarketList() {
 			Indicator.open()
 			Market.find({
 				coinId: this.selected
 			}).then(res => {
-				this.markets = res
 				this.tableData = res.map(item => {
 					return {
 						name: item.name.split('/')[0],
@@ -108,16 +95,48 @@ export default {
 							? (item.volume/1000).toFixed(2) + '万' 
 							: item.volume.toFixed(2),
 						image: item.image,
-						1104: { price: item.price.mul(7), change: item.change },
-						1103: { price: 4.67, change: 0.1},
-						1102: { price: 4.67, change: 0.1},
-						1101: { price: 4.67, change: 0.1}
+						today: { price: item.price.mul(7), change: item.change },
+						// 1103: { price: 4.67, change: 0.1},
+						// 1102: { price: 4.67, change: 0.1},
+						// 1101: { price: 4.67, change: 0.1}
+					}
+				})
+				this.getHistoryList()
+				Indicator.close()
+			})
+		},
+		getHistoryList() {
+			Indicator.open()
+			Market.historyList({
+				coinId: this.selected
+			}).then(res => {
+				res.forEach((item, i) => {
+					for (let key in item) {
+						console.log(key, item[key])
+						this.columns.push({
+							field: key, 
+							title: new Date(key), 
+							width: 160, 
+							titleAlign: 'center', 
+							columnAlign: 'right',
+							isResize: true, 
+							componentName: 'table-price'
+						})
+						this.tableData = this.tableData.map(obj => {
+							return {
+								name: obj.name,
+								volume: obj.volume,
+								image: obj.image,
+								today: obj.today,
+								key: {
+									price: item[key].price,
+									change: item[key].change
+								}
+							}
+						})
 					}
 				})
 				Indicator.close()
-				loaded && loaded('done')
-			}).catch(err => {
-				loaded && loaded('fail')
 			})
 		}
 	}
