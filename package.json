@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "ly-tab": "^2.1.1",
     "mint-ui": "^2.2.13",
     "vue": "^2.5.2",
+    "vue-easytable": "^1.7.1",
     "vue-pull-to": "^0.1.6",
     "vue-router": "^3.0.1"
   },

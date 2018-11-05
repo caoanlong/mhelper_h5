@@ -1,15 +1,21 @@
 <template>
     <div class="wrapper">
         <div class="item first">
-            <img class="coin-icon" :src="marketCoin.image" alt="">
+            <img class="coin-icon" v-lazy="marketCoin.image" alt="">
         </div>
         <div class="item one">
             <div class="up">
-                <div class="market">{{marketCoin.name}}</div>
+                <div class="market">{{marketCoin.name.split('/')[0]}}</div>
             </div>
             <div class="down">
                 <div class="num-title">量</div>
-                <div class="num-value">{{marketCoin.volume}}</div>
+                <div class="num-value">
+                    {{
+                        marketCoin.volume > 1000 
+                        ? (marketCoin.volume/1000).toFixed(2) + '万' 
+                        : marketCoin.volume.toFixed(2)
+                    }}
+                </div>
             </div>
         </div>
         <div class="item two">
@@ -98,7 +104,7 @@ export default {
             color #ffffff
             border-radius 3px
             &.rise
-                background-color #d9534f
-            &.fall
                 background-color #5cb85c
+            &.fall
+                background-color #d9534f
 </style>

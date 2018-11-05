@@ -1,6 +1,5 @@
 
 // 解决四维运算,js计算失去精度的问题 
-
 //加法   
 Number.prototype.add = function (arg) {
     var r1, r2, m;
