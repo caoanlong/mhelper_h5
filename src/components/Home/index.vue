@@ -9,25 +9,21 @@
 				<span>行情提醒</span>
 			</div>
 		</mt-header>
-		<mt-navbar v-model="selected" class="navbar">
-			<mt-tab-item 
-				:id="item.id" 
-				v-for="item in tabs" 
-				:key="item.id">
-				{{item.name}}
-			</mt-tab-item>
-		</mt-navbar>
+		<ly-tab 
+			class="navbar"
+			:items="tabs"
+			:options="options" 
+			@change="changeTab">
+		</ly-tab>
 		<v-table
 			:title-row-height="30"
-			:row-height="60"
+			:row-height="90"
 			:height="tableHeight"
 			is-horizontal-resize
 			:vertical-resize-offset='5'
-			style="width:100%"
+			style="width:100%" 
 			:columns="columns"
-			:table-data="tableData"
-			row-hover-color="#eee"
-			row-click-color="#edf7ff">
+			:table-data="tableData">
 		</v-table>
 	</div>
 </template>
@@ -41,8 +37,12 @@ export default {
 	name: "Home",
 	data() {
 		return {
-			selected: '',
+			selectedId: '',
 			tabs: [],
+			options: {
+				activeColor: '#26a2ff',
+				labelKey: 'name'
+			},
 			titleList: [
 				{ name: '币种', flex: 2 },
 				{ name: '成交额', flex: 2 },
@@ -51,14 +51,7 @@ export default {
 			],
 			tableHeight: 0,
 			tableData: [],
-			columns: [
-				
-			]
-		}
-	},
-	watch: {
-		selected(coinId) {
-			this.getMarketList()
+			columns: []
 		}
 	},
 	created() {
@@ -67,25 +60,35 @@ export default {
 		this.getCoinList()
 	},
 	methods: {
+		changeTab(item, index) {
+			if (this.selectedId != item.id) {
+				this.selectedId = item.id
+				this.getMarketList()
+			}
+		},
 		getCoinList() {
 			Coin.find().then(res => {
 				this.tabs = res
-				this.selected = res[0].id
+				this.selectedId = res[0].id
+				this.getMarketList()
 			})
 		},
 		getMarketList() {
 			Indicator.open()
 			Market.find({
-				coinId: this.selected
+				coinId: this.selectedId
 			}).then(res => {
 				const columns = []
 				for (let x = 0; x < res.length; x++) {
-					const element = res[x]
-					const curDate = moment(res[x].date).format('MM-DD')
+					const curDate = moment(res[x].date)
 					columns.push({
-						field: curDate, 
-						title: curDate, 
-						width: 160, 
+						field: curDate.format('MM-DD'), 
+						title: curDate.isSame(moment(), 'day') 
+							? '今天' 
+							: (curDate.isSame(moment().subtract(1, 'days'), 'day') 
+								? '昨天' 
+								: curDate.format('MM-DD')), 
+						width: 86, 
 						titleAlign: 'center', 
 						columnAlign: 'right',
 						isResize: true, 
@@ -94,55 +97,48 @@ export default {
 				}
 				this.columns = [
 					{
-						field: 'name', title: '币种', width: 96, titleAlign: 'center', columnAlign: 'left',isResize:true, isFrozen: true, componentName: 'table-market'
+						field: 'name', 
+						title: '币种', 
+						width: 90, 
+						titleAlign: 'center', 
+						columnAlign: 'left',
+						isResize:true, 
+						isFrozen: true, 
+						componentName: 'table-market'
 					}, ...columns]
 				const today = res[0]
 				const data = []
 				for (let i = 0; i < today.markets.length; i++) {
-					const name = today.markets[i].name.split('/')[0]
-					const item = {
-						name,
-						volume: today.markets[i].volume > 1000 
-							? (today.markets[i].volume/1000).toFixed(2) + '万' 
-							: today.markets[i].volume.toFixed(2),
-						image: today.markets[i].image
-					}
+					const name = today.markets[i].name
+					const image = today.markets[i].image
+					const item = { name, image }
 					for (let j = 0; j < res.length; j++) {
-						const price = res[j].markets[i].price
-						const priceRMB = price.mul(7)
-						const change = res[j].markets[i].change
-						item[moment(res[j].date).format('MM-DD')] = {
-							price: price > 0.0001 
-								? price.toFixed(2) 
-								: price.toFixed(6),
-							priceRMB: priceRMB > 0.0001 
-								? priceRMB.toFixed(2) 
-								: priceRMB.toFixed(6),
-							change: change.toFixed(2)
+						for (let y = 0; y < res[j].markets.length; y++) {
+							const market = res[j].markets[y]
+							if (name == market.name) {
+								const price = market.price
+								const priceRMB = price.mul(7)
+								const change = market.change
+								const volume = market.volume
+								item[moment(res[j].date).format('MM-DD')] = {
+									price: price > 0.001 
+										? price.toFixed(2) 
+										: price.toFixed(6),
+									priceRMB: priceRMB > 0.001 
+										? priceRMB.toFixed(2) 
+										: priceRMB.toFixed(6),
+									change: change.toFixed(2),
+									volume: volume > 1000 
+										? (volume/1000).toFixed(2) + '万' 
+										: volume.toFixed(2),
+								}
+							}
 						}
 					}
 					data.push(item)
 				}
 				this.tableData = data
 				Indicator.close()
-			})
-		},
-		getHistoryList() {
-			Market.historyList({
-				coinId: this.selected
-			}).then(res => {
-				res.forEach(item => {
-					const curDate = moment(item.historyTime).format('MM-DD')
-					this.columns.push({
-						field: curDate, 
-						title: curDate, 
-						width: 160, 
-						titleAlign: 'center', 
-						columnAlign: 'right',
-						isResize:true, 
-						componentName: 'table-price'
-					})
-				})
 			})
 		}
 	}
@@ -182,7 +178,7 @@ export default {
 	left 0
 	right 0
 	bottom 0
-	padding-top 89px
+	padding-top 79px
 	padding-bottom 55px
 	.logo
 		display flex
@@ -200,5 +196,5 @@ export default {
 		top 40px
 		left 0
 		width 100%
-		z-index 999
+		z-index 9999
 </style>
