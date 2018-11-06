@@ -49,7 +49,7 @@ Vue.component('table-price', {
 	template: `<div style="display:flex;width:154px;height:60px;">
 			<div style="flex:1;padding-right:15px">
 				<div style="height:30px;line-height:2.5;font-size:16px;font-weight:600;color:#333333">{{rowData[field].price}}</div>
-				<div style="height:30px;line-height:1.8;font-size:12px;color:#999999">￥{{rowData[field].price}}</div>
+				<div style="height:30px;line-height:1.8;font-size:12px;color:#999999">￥{{rowData[field].priceRMB}}</div>
 			</div>
 			<div style="flex:1;padding-right:5px;position:relative;">
 				<div style="width:100%;height:30px;position:absolute;top:10px;right:0">

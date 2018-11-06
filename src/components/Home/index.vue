@@ -34,6 +34,7 @@
 
 <script>
 import { Indicator } from 'mint-ui'
+import moment from 'moment'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 export default {
@@ -51,18 +52,7 @@ export default {
 			tableHeight: 0,
 			tableData: [],
 			columns: [
-				{
-					field: 'name', title: '币种', width: 96, titleAlign: 'center', columnAlign: 'left',isResize:true, isFrozen: true, componentName: 'table-market'
-				},{
-					field: 'today', title: '今天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				},
-				// {
-				// 	field: '1103', title: '昨天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				// },{
-				// 	field: '1102', title: '前天', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				// },{
-				// 	field: '1101', title: '11月01日', width: 160, titleAlign: 'center', columnAlign: 'right',isResize:true, componentName: 'table-price'
-				// }
+				
 			]
 		}
 	},
@@ -88,55 +78,71 @@ export default {
 			Market.find({
 				coinId: this.selected
 			}).then(res => {
-				this.tableData = res.map(item => {
-					return {
-						name: item.name.split('/')[0],
-						volume: item.volume > 1000 
-							? (item.volume/1000).toFixed(2) + '万' 
-							: item.volume.toFixed(2),
-						image: item.image,
-						today: { price: item.price.mul(7), change: item.change },
-						// 1103: { price: 4.67, change: 0.1},
-						// 1102: { price: 4.67, change: 0.1},
-						// 1101: { price: 4.67, change: 0.1}
+				const columns = []
+				for (let x = 0; x < res.length; x++) {
+					const element = res[x]
+					const curDate = moment(res[x].date).format('MM-DD')
+					columns.push({
+						field: curDate, 
+						title: curDate, 
+						width: 160, 
+						titleAlign: 'center', 
+						columnAlign: 'right',
+						isResize: true, 
+						componentName: 'table-price'
+					})
+				}
+				this.columns = [
+					{
+						field: 'name', title: '币种', width: 96, titleAlign: 'center', columnAlign: 'left',isResize:true, isFrozen: true, componentName: 'table-market'
+					}, ...columns]
+				const today = res[0]
+				const data = []
+				for (let i = 0; i < today.markets.length; i++) {
+					const name = today.markets[i].name.split('/')[0]
+					const item = {
+						name,
+						volume: today.markets[i].volume > 1000 
+							? (today.markets[i].volume/1000).toFixed(2) + '万' 
+							: today.markets[i].volume.toFixed(2),
+						image: today.markets[i].image
 					}
-				})
-				this.getHistoryList()
+					for (let j = 0; j < res.length; j++) {
+						const price = res[j].markets[i].price
+						const priceRMB = price.mul(7)
+						const change = res[j].markets[i].change
+						item[moment(res[j].date).format('MM-DD')] = {
+							price: price > 0.0001 
+								? price.toFixed(2) 
+								: price.toFixed(6),
+							priceRMB: priceRMB > 0.0001 
+								? priceRMB.toFixed(2) 
+								: priceRMB.toFixed(6),
+							change: change.toFixed(2)
+						}
+					}
+					data.push(item)
+				}
+				this.tableData = data
 				Indicator.close()
 			})
 		},
 		getHistoryList() {
-			Indicator.open()
 			Market.historyList({
 				coinId: this.selected
 			}).then(res => {
-				res.forEach((item, i) => {
-					for (let key in item) {
-						console.log(key, item[key])
-						this.columns.push({
-							field: key, 
-							title: new Date(key), 
-							width: 160, 
-							titleAlign: 'center', 
-							columnAlign: 'right',
-							isResize: true, 
-							componentName: 'table-price'
-						})
-						this.tableData = this.tableData.map(obj => {
-							return {
-								name: obj.name,
-								volume: obj.volume,
-								image: obj.image,
-								today: obj.today,
-								key: {
-									price: item[key].price,
-									change: item[key].change
-								}
-							}
-						})
-					}
+				res.forEach(item => {
+					const curDate = moment(item.historyTime).format('MM-DD')
+					this.columns.push({
+						field: curDate, 
+						title: curDate, 
+						width: 160, 
+						titleAlign: 'center', 
+						columnAlign: 'right',
+						isResize:true, 
+						componentName: 'table-price'
+					})
 				})
-				Indicator.close()
 			})
 		}
 	}
