@@ -51,7 +51,8 @@ export default {
 			],
 			tableHeight: 0,
 			tableData: [],
-			columns: []
+			columns: [],
+			sorts: ['WCG','MDP','DRT','MAT','MTR','ALLN','BTC','XRP','ETH','LTC','BCH', 'DASH']
 		}
 	},
 	created() {
@@ -135,7 +136,9 @@ export default {
 							}
 						}
 					}
-					data.push(item)
+					for (let z = 0; z < sorts.length; z++) {
+						if (item.name.split('/')[0] == sorts[z]) data.push(item)
+					}
 				}
 				this.tableData = data
 				Indicator.close()
