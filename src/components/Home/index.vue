@@ -1,6 +1,8 @@
 <template>
-	<div class="container">
-		<mt-header fixed title="MHelper">
+	<div 
+		class="container" 
+		:style="{'padding-top': isMiniprogram ? '39px' : '79px', 'padding-bottom': isMiniprogram ? '0' : '55px'}">
+		<mt-header fixed title="MHelper" v-if="!isMiniprogram">
 			<div slot="left" class="logo">
 				<img src="../../assets/logo.png"/>
 			</div>
@@ -10,6 +12,7 @@
 			</div>
 		</mt-header>
 		<ly-tab 
+			:style="{'top': isMiniprogram ? '0' : '40px'}"
 			class="navbar"
 			:items="tabs"
 			:options="options" 
@@ -37,6 +40,7 @@ export default {
 	name: "Home",
 	data() {
 		return {
+			isMiniprogram: true,
 			selectedId: '',
 			tabs: [],
 			options: {
@@ -57,7 +61,18 @@ export default {
 	},
 	created() {
 		// 145
-		this.tableHeight = window.screen.availHeight-145
+		// this.tableHeight = window.screen.availHeight-145
+		this.tableHeight = window.screen.availHeight
+        // if (/MicroMessenger/i.test(navigator.userAgent)) {
+        // 	//ios的ua中无miniProgram，很坑爹,但都有MicroMessenger（表示是微信浏览器）
+        //     wx.miniProgram.getEnv((res)=>{
+        //         if (res.miniprogram) {
+        //             this.isMiniprogram = true
+        //         } else {
+        //             this.isMiniprogram = false
+        //         }
+        //     })
+        // }
 		this.getCoinList()
 	},
 	methods: {
@@ -124,7 +139,7 @@ export default {
 								item[moment(res[j].date).format('MM-DD')] = {
 									price: price > 0.001 
 										? price.toFixed(2) 
-										: price.toFixed(6),
+										: price.toFixed(6),	
 									priceRMB: priceRMB > 0.001 
 										? priceRMB.toFixed(2) 
 										: priceRMB.toFixed(6),
@@ -181,8 +196,6 @@ export default {
 	left 0
 	right 0
 	bottom 0
-	padding-top 79px
-	padding-bottom 55px
 	.logo
 		display flex
 		align-items center
@@ -196,7 +209,6 @@ export default {
 			width 22px
 	.navbar
 		position fixed
-		top 40px
 		left 0
 		width 100%
 		z-index 9999
