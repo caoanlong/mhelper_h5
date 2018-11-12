@@ -2,19 +2,23 @@
 	<div 
 		class="container" 
 		style="padding-top:79px;padding-bottom:55px">
-		<mt-header fixed title="MHelper">
-			<div slot="left" class="logo">
-				<img src="../../assets/logo.png"/>
+		<div class="header">
+			<div class="notice">
+				<svg-icon icon-class="notice"></svg-icon>
+				<span>行情提醒</span>
 			</div>
-			<div slot="right">
-				<span>
-					<svg-icon icon-class="notice"></svg-icon>
-					<span>行情提醒</span>
-				</span>
-				<span> | </span>
+			<div class="tab-segment">
+				<div class="left" @click="changeCurrent(true)">
+					<div :class="isCur ? 'active' : ''">当前行情</div>
+				</div>
+				<div class="right" @click="changeCurrent(false)">
+					<div :class="isCur ? '' : 'active'">历史行情</div>
+				</div>
+			</div>
+			<div class="refresh">
 				<svg-icon icon-class="refresh" @click.native="refresh"></svg-icon>
 			</div>
-		</mt-header>
+		</div>
 		<ly-tab 
 			style="top:40px"
 			class="navbar"
@@ -22,7 +26,11 @@
 			:options="options" 
 			@change="changeTab">
 		</ly-tab>
-		<v-table
+		<div v-if="isCur">
+			<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
+		</div>
+		<v-table 
+			v-else
 			:title-row-height="30"
 			:row-height="90"
 			:height="tableHeight"
@@ -32,25 +40,30 @@
 			:columns="columns"
 			:table-data="tableData">
 		</v-table>
+		<div style="height:90px"></div>
 	</div>
 </template>
 
 <script>
-import { Indicator } from 'mint-ui'
+import { Indicator, Toast } from 'mint-ui'
 import moment from 'moment'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
+import CoinItem from './components/CoinItem'
 export default {
 	name: "Home",
+	components: { CoinItem },
 	data() {
 		return {
 			isMiniprogram: false,
 			selectedId: '',
+			isCur: true,
 			tabs: [],
 			options: {
 				activeColor: '#26a2ff',
 				labelKey: 'name'
 			},
+			list: [],
 			titleList: [
 				{ name: '币种', flex: 2 },
 				{ name: '成交额', flex: 2 },
@@ -80,25 +93,55 @@ export default {
 		this.getCoinList()
 	},
 	methods: {
+		changeCurrent(isCur) {
+			this.isCur = isCur
+			this.isCur ? this.getMarketList() : this.getMarketHistoryList()
+		},
 		changeTab(item, index) {
 			if (this.selectedId != item.id) {
 				this.selectedId = item.id
-				this.getMarketList()
+				this.isCur ? this.getMarketList() : this.getMarketHistoryList()
 			}
 		},
-		refresh() {
-			this.getMarketList()
+		async refresh() {
+			if (this.isCur) {
+				await this.getMarketList()
+			} else {
+				await this.getMarketHistoryList()
+			}
+			Toast({
+				message: '刷新成功！',
+				duration: 500
+			})
 		},
 		getCoinList() {
 			Coin.find().then(res => {
 				this.tabs = res
 				this.selectedId = res[0].id
-				this.getMarketList()
+				this.isCur ? this.getMarketList() : this.getMarketHistoryList()
 			})
 		},
 		getMarketList() {
 			Indicator.open()
 			Market.find({
+				coinId: this.selectedId
+			}).then(res => {
+				this.list = res
+				const sortData = []
+				for (let n = 0; n < this.sorts.length; n++) {
+					for (let z = 0; z < res.length; z++) {
+						if (this.sorts[n] == res[z].name.split('/')[0]){
+							sortData.push(res[z])
+						}
+					}
+				}
+				this.list = sortData
+				Indicator.close()
+			})
+		},
+		getMarketHistoryList() {
+			Indicator.open()
+			Market.historyList({
 				coinId: this.selectedId
 			}).then(res => {
 				const columns = []
@@ -209,6 +252,58 @@ export default {
 	left 0
 	right 0
 	bottom 0
+	.header
+		position fixed
+		left 0
+		top 0
+		width 100%
+		height 40px
+		line-height 40px
+		background-color #26a2ff
+		color #ffffff
+		font-size 14px
+		display flex
+		.notice
+			flex 0 0 90px
+			padding-left 10px
+		.tab-segment
+			flex 1
+			display flex
+			.left
+				flex 1
+				padding-left 10px
+				padding-top 7px
+				div
+					height 26px
+					line-height 26px
+					text-align center
+					border-top-left-radius 4px
+					border-bottom-left-radius 4px
+					border 1px solid #ffffff
+					border-right none
+					&.active
+						color #26a2ff
+						background-color #ffffff
+						border none
+			.right
+				flex 1
+				padding-right 10px
+				padding-top 7px
+				div
+					height 26px
+					line-height 26px
+					text-align center
+					border-top-right-radius 4px
+					border-bottom-right-radius 4px
+					border 1px solid #ffffff
+					border-left none
+					&.active
+						color #26a2ff
+						background-color #ffffff
+						border none
+		.refresh
+			flex 0 0 90px
+			padding-left 60px
 	.logo
 		display flex
 		align-items center
