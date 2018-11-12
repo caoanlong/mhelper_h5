@@ -4,6 +4,7 @@ import Vue from 'vue'
 import '../src/assets/css/style.styl'
 import MintUI from 'mint-ui'
 import 'mint-ui/lib/style.css'
+
 // 引入样式
 import 'vue-easytable/libs/themes-base/index.css'
 // 导入 table 和 分页组件

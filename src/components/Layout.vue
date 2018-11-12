@@ -1,7 +1,7 @@
 <template>
     <div>
         <router-view></router-view>
-        <mt-tabbar fixed v-model="selected" v-if="$route.meta.hasTab && !isMiniprogram">
+        <mt-tabbar fixed v-model="selected" v-if="$route.meta.hasTab">
 			<mt-tab-item id="home">
                 <svg-icon slot="icon" style="font-size:22px" icon-class="home"></svg-icon>首页
 			</mt-tab-item>
@@ -19,7 +19,7 @@
 export default {
     data() {
         return {
-            isMiniprogram: true,
+            isMiniprogram: false,
             selected: this.$route.name
         }
     },

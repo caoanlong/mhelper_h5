@@ -1,18 +1,22 @@
 <template>
 	<div 
 		class="container" 
-		:style="{'padding-top': isMiniprogram ? '39px' : '79px', 'padding-bottom': isMiniprogram ? '0' : '55px'}">
-		<mt-header fixed title="MHelper" v-if="!isMiniprogram">
+		style="padding-top:79px;padding-bottom:55px">
+		<mt-header fixed title="MHelper">
 			<div slot="left" class="logo">
 				<img src="../../assets/logo.png"/>
 			</div>
 			<div slot="right">
-				<svg-icon icon-class="notice" class="set-icon"></svg-icon>
-				<span>行情提醒</span>
+				<span>
+					<svg-icon icon-class="notice"></svg-icon>
+					<span>行情提醒</span>
+				</span>
+				<span> | </span>
+				<svg-icon icon-class="refresh" @click.native="refresh"></svg-icon>
 			</div>
 		</mt-header>
 		<ly-tab 
-			:style="{'top': isMiniprogram ? '0' : '40px'}"
+			style="top:40px"
 			class="navbar"
 			:items="tabs"
 			:options="options" 
@@ -40,7 +44,7 @@ export default {
 	name: "Home",
 	data() {
 		return {
-			isMiniprogram: true,
+			isMiniprogram: false,
 			selectedId: '',
 			tabs: [],
 			options: {
@@ -61,8 +65,8 @@ export default {
 	},
 	created() {
 		// 145
-		// this.tableHeight = window.screen.availHeight-145
-		this.tableHeight = window.screen.availHeight
+		this.tableHeight = window.screen.availHeight-135
+		// this.tableHeight = window.screen.availHeight
         // if (/MicroMessenger/i.test(navigator.userAgent)) {
         // 	//ios的ua中无miniProgram，很坑爹,但都有MicroMessenger（表示是微信浏览器）
         //     wx.miniProgram.getEnv((res)=>{
@@ -81,6 +85,9 @@ export default {
 				this.selectedId = item.id
 				this.getMarketList()
 			}
+		},
+		refresh() {
+			this.getMarketList()
 		},
 		getCoinList() {
 			Coin.find().then(res => {
@@ -151,11 +158,17 @@ export default {
 							}
 						}
 					}
-					for (let z = 0; z < sorts.length; z++) {
-						if (item.name.split('/')[0] == sorts[z]) data.push(item)
+					data.push(item)
+				}
+				const sortData = []
+				for (let n = 0; n < this.sorts.length; n++) {
+					for (let z = 0; z < data.length; z++) {
+						if (this.sorts[n] == data[z].name.split('/')[0]){
+							sortData.push(data[z])
+						}
 					}
 				}
-				this.tableData = data
+				this.tableData = sortData
 				Indicator.close()
 			})
 		}

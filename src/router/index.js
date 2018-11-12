@@ -33,6 +33,12 @@ export default new Router({
 					name: 'mine',
 					meta: { title: '我的', hasTab: true },
 					component: () => import('../components/Mine')
+				},
+				{
+					path: '/mineinfo',
+					name: 'mineinfo',
+					meta: { title: '个人信息' },
+					component: () => import('../components/MineInfo')
 				}
 			]
 		}

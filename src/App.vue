@@ -11,5 +11,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-
+	#app
+		position relative
+		height 100%
+		background-color #f2f2f2
 </style>
