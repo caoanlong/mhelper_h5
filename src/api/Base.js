@@ -24,7 +24,7 @@ class Base {
                 params
             }).then(res => {
                 resolve(res.data.data || res.data || res)
-            })
+            }).catch(err => reject(err))
         })
     }
     findById(params) {
@@ -34,7 +34,7 @@ class Base {
                 params
             }).then(res => {
                 resolve(res.data.data || res.data || res)
-            })
+            }).catch(err => reject(err))
         })
     }
     add(data) {

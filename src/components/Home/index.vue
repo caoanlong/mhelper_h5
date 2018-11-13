@@ -63,6 +63,7 @@ export default {
 				activeColor: '#26a2ff',
 				labelKey: 'name'
 			},
+			platform: 'mbaex',
 			list: [],
 			titleList: [
 				{ name: '币种', flex: 2 },
@@ -77,19 +78,7 @@ export default {
 		}
 	},
 	created() {
-		// 145
 		this.tableHeight = window.screen.availHeight-135
-		// this.tableHeight = window.screen.availHeight
-        // if (/MicroMessenger/i.test(navigator.userAgent)) {
-        // 	//ios的ua中无miniProgram，很坑爹,但都有MicroMessenger（表示是微信浏览器）
-        //     wx.miniProgram.getEnv((res)=>{
-        //         if (res.miniprogram) {
-        //             this.isMiniprogram = true
-        //         } else {
-        //             this.isMiniprogram = false
-        //         }
-        //     })
-        // }
 		this.getCoinList()
 	},
 	methods: {
@@ -115,7 +104,9 @@ export default {
 			})
 		},
 		getCoinList() {
-			Coin.find().then(res => {
+			Coin.find({
+				platform: this.platform
+			}).then(res => {
 				this.tabs = res
 				this.selectedId = res[0].id
 				this.isCur ? this.getMarketList() : this.getMarketHistoryList()
@@ -124,7 +115,8 @@ export default {
 		getMarketList() {
 			Indicator.open()
 			Market.find({
-				coinId: this.selectedId
+				coinId: this.selectedId,
+				platform: this.platform
 			}).then(res => {
 				this.list = res
 				const sortData = []
@@ -137,12 +129,15 @@ export default {
 				}
 				this.list = sortData
 				Indicator.close()
+			}).catch(err => {
+				Indicator.close()
 			})
 		},
 		getMarketHistoryList() {
 			Indicator.open()
 			Market.historyList({
-				coinId: this.selectedId
+				coinId: this.selectedId,
+				platform: this.platform
 			}).then(res => {
 				const columns = []
 				for (let x = 0; x < res.length; x++) {
@@ -213,6 +208,8 @@ export default {
 				}
 				this.tableData = sortData
 				Indicator.close()
+			}).catch(err => {
+				Indicator.close()
 			})
 		}
 	}
@@ -256,6 +253,7 @@ export default {
 		position fixed
 		left 0
 		top 0
+		z-index 9999
 		width 100%
 		height 40px
 		line-height 40px
