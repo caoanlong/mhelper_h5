@@ -6,7 +6,7 @@
                 <svg-icon slot="icon" style="font-size:22px" icon-class="home"></svg-icon>首页
 			</mt-tab-item>
 			<mt-tab-item id="raiders">
-				<svg-icon slot="icon" style="font-size:22px" icon-class="raiders"></svg-icon>攻略
+				<svg-icon slot="icon" style="font-size:22px" icon-class="raiders"></svg-icon>资讯
 			</mt-tab-item>
 			<mt-tab-item id="mine">
 				<svg-icon slot="icon" style="font-size:22px" icon-class="mine"></svg-icon>我的

@@ -1,7 +1,7 @@
 <template>
 	<div 
 		class="container" 
-		style="padding-top:79px;padding-bottom:55px">
+		style="padding-top:119px;padding-bottom:55px">
 		<div class="header">
 			<div class="notice">
 				<svg-icon icon-class="notice"></svg-icon>
@@ -19,8 +19,20 @@
 				<svg-icon icon-class="refresh" @click.native="refresh"></svg-icon>
 			</div>
 		</div>
+		<div class="platform-tab">
+			<div 
+				class="platform-item mbaex-logo" 
+				:class="{'select-platform': platform == 'mbaex'}" 
+				@click="changePlatform('mbaex')">
+			</div>
+			<div 
+				class="platform-item eunex-logo" 
+				:class="{'select-platform': platform == 'eunex'}" 
+				@click="changePlatform('eunex')">
+			</div>
+		</div>
 		<ly-tab 
-			style="top:40px"
+			style="top:80px"
 			class="navbar"
 			:items="tabs"
 			:options="options" 
@@ -74,7 +86,7 @@ export default {
 			tableHeight: 0,
 			tableData: [],
 			columns: [],
-			sorts: ['WCG','MDP','DRT','MAT','MTR','ALLN','BTC','XRP','ETH','LTC','BCH', 'DASH']
+			sorts: ['WCG','MDP','DRT','MAT','MTR','ALLN','BTC','XRP','ETH','LTC','BCH', 'DASH', 'ENX', 'USDTK']
 		}
 	},
 	created() {
@@ -82,6 +94,10 @@ export default {
 		this.getCoinList()
 	},
 	methods: {
+		changePlatform(platform) {
+			this.platform = platform
+			this.getCoinList()
+		},
 		changeCurrent(isCur) {
 			this.isCur = isCur
 			this.isCur ? this.getMarketList() : this.getMarketHistoryList()
@@ -114,11 +130,11 @@ export default {
 		},
 		getMarketList() {
 			Indicator.open()
+			this.list = []
 			Market.find({
 				coinId: this.selectedId,
 				platform: this.platform
 			}).then(res => {
-				this.list = res
 				const sortData = []
 				for (let n = 0; n < this.sorts.length; n++) {
 					for (let z = 0; z < res.length; z++) {
@@ -135,6 +151,7 @@ export default {
 		},
 		getMarketHistoryList() {
 			Indicator.open()
+			this.tableData = []
 			Market.historyList({
 				coinId: this.selectedId,
 				platform: this.platform
@@ -302,6 +319,41 @@ export default {
 		.refresh
 			flex 0 0 90px
 			padding-left 60px
+	.platform-tab
+		position fixed
+		left 0
+		top 40px
+		z-index 9999
+		width 100%
+		height 40px
+		background-color #ffffff
+		border 1px solid #dddddd
+		display flex
+		.platform-item
+			flex 1
+			&.mbaex-logo
+				height 100%
+				background-image url('../../assets/logo-mbaex.png')
+				background-repeat no-repeat
+				background-size 50%
+				background-position center
+			&.eunex-logo
+				height 100%
+				background-image url('../../assets/logo-eunex.png')
+				background-repeat no-repeat
+				background-size 50%
+				background-position center
+		.select-platform
+			position relative
+			&:after
+				content ''
+				display block
+				width 100%
+				height 3px
+				background-color #26a2ff
+				position absolute
+				left 0
+				bottom 0
 	.logo
 		display flex
 		align-items center

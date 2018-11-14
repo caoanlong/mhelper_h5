@@ -25,7 +25,7 @@ export default new Router({
 				{
 					path: '/raiders',
 					name: 'raiders',
-					meta: { title: '攻略', hasTab: true },
+					meta: { title: '资讯', hasTab: true },
 					component: () => import('../components/Raiders')
 				},
 				{
