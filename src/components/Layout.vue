@@ -5,7 +5,7 @@
 			<mt-tab-item id="home">
                 <svg-icon slot="icon" style="font-size:22px" icon-class="home"></svg-icon>首页
 			</mt-tab-item>
-			<mt-tab-item id="raiders">
+			<mt-tab-item id="news">
 				<svg-icon slot="icon" style="font-size:22px" icon-class="raiders"></svg-icon>资讯
 			</mt-tab-item>
 			<mt-tab-item id="mine">

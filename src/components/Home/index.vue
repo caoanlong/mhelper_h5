@@ -1,24 +1,19 @@
 <template>
-	<div 
-		class="container" 
-		style="padding-top:119px;padding-bottom:55px">
-		<div class="header">
-			<div class="notice">
-				<svg-icon icon-class="notice"></svg-icon>
-				<span>行情提醒</span>
-			</div>
-			<div class="tab-segment">
-				<div class="left" @click="changeCurrent(true)">
-					<div :class="isCur ? 'active' : ''">当前行情</div>
-				</div>
-				<div class="right" @click="changeCurrent(false)">
-					<div :class="isCur ? '' : 'active'">历史行情</div>
-				</div>
-			</div>
-			<div class="refresh">
-				<svg-icon icon-class="refresh" @click.native="refresh"></svg-icon>
-			</div>
+	<div class="home-container">
+		<div class="refresh" @click="refresh">
+			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
+		<mt-header fixed :title="$route.meta.title">
+			<div slot="left" @click="notice">
+                <svg-icon icon-class="notice"></svg-icon>
+				<span>行情提醒</span>
+            </div>
+			<mt-button icon="more" slot="right" @click="sheetVisible = true"></mt-button>
+		</mt-header>
+		<mt-actionsheet
+			:actions="actions"
+			v-model="sheetVisible">
+		</mt-actionsheet>
 		<div class="platform-tab">
 			<div 
 				class="platform-item mbaex-logo" 
@@ -38,195 +33,97 @@
 			:options="options" 
 			@change="changeTab">
 		</ly-tab>
-		<div v-if="isCur">
+		<div>
 			<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 		</div>
-		<v-table 
-			v-else
-			:title-row-height="30"
-			:row-height="90"
-			:height="tableHeight"
-			is-horizontal-resize
-			:vertical-resize-offset='5'
-			style="width:100%" 
-			:columns="columns"
-			:table-data="tableData">
-		</v-table>
 		<div style="height:90px"></div>
 	</div>
 </template>
 
 <script>
 import { Indicator, Toast } from 'mint-ui'
-import moment from 'moment'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import CoinItem from './components/CoinItem'
+import { SORTS } from '../../utils/consts'
 export default {
 	name: "Home",
 	components: { CoinItem },
 	data() {
 		return {
-			isMiniprogram: false,
+			sheetVisible: false,
+			actions: [
+				{ 
+					name: '历史行情',
+					method: () => {
+						this.$router.push({ name: 'history' })
+					} 
+				}, 
+				{ 
+					name: '搬砖分析',
+					method: () => {
+						this.$router.push({ name: 'movebricks' })
+					}
+				}, 
+				{ 
+					name: '行情提醒',
+					method: () => {
+						this.notice()
+					}
+				}],
 			selectedId: '',
-			isCur: true,
 			tabs: [],
 			options: {
 				activeColor: '#26a2ff',
 				labelKey: 'name'
 			},
 			platform: 'mbaex',
-			list: [],
-			titleList: [
-				{ name: '币种', flex: 2 },
-				{ name: '成交额', flex: 2 },
-				{ name: '价格', flex: 5 },
-				{ name: '涨幅', flex: 3 }
-			],
-			tableHeight: 0,
-			tableData: [],
-			columns: [],
-			sorts: ['WCG','MDP','DRT','MAT','MTR','ALLN','BTC','XRP','ETH','LTC','BCH', 'DASH', 'ENX', 'USDTK']
+			list: []
 		}
 	},
 	created() {
-		this.tableHeight = window.screen.availHeight-135
 		this.getCoinList()
 	},
 	methods: {
 		changePlatform(platform) {
 			this.platform = platform
-			this.getCoinList()
-		},
-		changeCurrent(isCur) {
-			this.isCur = isCur
-			this.isCur ? this.getMarketList() : this.getMarketHistoryList()
+			this.refresh()
 		},
 		changeTab(item, index) {
 			if (this.selectedId != item.id) {
 				this.selectedId = item.id
-				this.isCur ? this.getMarketList() : this.getMarketHistoryList()
+				this.refresh()
 			}
+		},
+		notice() {
+			Toast('暂未开放！')
 		},
 		async refresh() {
-			if (this.isCur) {
-				await this.getMarketList()
-			} else {
-				await this.getMarketHistoryList()
-			}
-			Toast({
-				message: '刷新成功！',
-				duration: 500
-			})
-		},
-		getCoinList() {
-			Coin.find({
-				platform: this.platform
-			}).then(res => {
-				this.tabs = res
-				this.selectedId = res[0].id
-				this.isCur ? this.getMarketList() : this.getMarketHistoryList()
-			})
-		},
-		getMarketList() {
 			Indicator.open()
 			this.list = []
-			Market.find({
-				coinId: this.selectedId,
-				platform: this.platform
-			}).then(res => {
-				const sortData = []
-				for (let n = 0; n < this.sorts.length; n++) {
-					for (let z = 0; z < res.length; z++) {
-						if (this.sorts[n] == res[z].name.split('/')[0]){
-							sortData.push(res[z])
-						}
+			const list = await this.getMarketList('mbaex')
+			const sortData = []
+			for (let i = 0; i < SORTS.length; i++) {
+				for (let x = 0; x < list.length; x++) {
+					if (SORTS[i] == list[x].name.split('/')[0]) {
+						sortData.push(list[x])
 					}
 				}
-				this.list = sortData
-				Indicator.close()
-			}).catch(err => {
-				Indicator.close()
+			}
+			this.list = sortData
+			Indicator.close()
+		},
+		getCoinList() {
+			Coin.find().then(res => {
+				this.tabs = res
+				this.selectedId = res[0].id
+				this.refresh()
 			})
 		},
-		getMarketHistoryList() {
-			Indicator.open()
-			this.tableData = []
-			Market.historyList({
+		getMarketList(platform) {
+			return Market.find({
 				coinId: this.selectedId,
 				platform: this.platform
-			}).then(res => {
-				const columns = []
-				for (let x = 0; x < res.length; x++) {
-					const curDate = moment(res[x].date)
-					columns.push({
-						field: curDate.format('MM-DD'), 
-						title: curDate.isSame(moment(), 'day') 
-							? '今天' 
-							: (curDate.isSame(moment().subtract(1, 'days'), 'day') 
-								? '昨天' 
-								: curDate.format('MM-DD')), 
-						width: 86, 
-						titleAlign: 'center', 
-						columnAlign: 'right',
-						isResize: true, 
-						componentName: 'table-price'
-					})
-				}
-				this.columns = [
-					{
-						field: 'name', 
-						title: '币种', 
-						width: 90, 
-						titleAlign: 'center', 
-						columnAlign: 'left',
-						isResize:true, 
-						isFrozen: true, 
-						componentName: 'table-market'
-					}, ...columns]
-				const today = res[0]
-				const data = []
-				for (let i = 0; i < today.markets.length; i++) {
-					const name = today.markets[i].name
-					const image = today.markets[i].image
-					const item = { name, image }
-					for (let j = 0; j < res.length; j++) {
-						for (let y = 0; y < res[j].markets.length; y++) {
-							const market = res[j].markets[y]
-							if (name == market.name) {
-								const price = market.price
-								const priceRMB = price.mul(7)
-								const change = market.change
-								const volume = market.volume
-								item[moment(res[j].date).format('MM-DD')] = {
-									price: price > 0.001 
-										? price.toFixed(2) 
-										: price.toFixed(6),	
-									priceRMB: priceRMB > 0.001 
-										? priceRMB.toFixed(2) 
-										: priceRMB.toFixed(6),
-									change: change.toFixed(2),
-									volume: volume > 1000 
-										? (volume/1000).toFixed(2) + '万' 
-										: volume.toFixed(2),
-								}
-							}
-						}
-					}
-					data.push(item)
-				}
-				const sortData = []
-				for (let n = 0; n < this.sorts.length; n++) {
-					for (let z = 0; z < data.length; z++) {
-						if (this.sorts[n] == data[z].name.split('/')[0]){
-							sortData.push(data[z])
-						}
-					}
-				}
-				this.tableData = sortData
-				Indicator.close()
-			}).catch(err => {
-				Indicator.close()
 			})
 		}
 	}
@@ -244,86 +141,33 @@ export default {
 </style>
 
 <style lang="stylus" scoped>
-.top-load-wrapper,.bottom-load-wrapper
-	line-height 50px
-	text-align center
-	color #aaa
-.icon-arrow
-	transition .2s
-	transform rotate(180deg)
-.icon-loading
-	transform rotate(0deg)
-	animation-name loading
-	animation-duration 3s
-	animation-iteration-count: infinite
-	animation-direction alternate
-@keyframes loading
-	from {transform: rotate(0deg)}
-	to {transform: rotate(360deg)}
-.container
+.home-container
 	position absolute
 	top 0
 	left 0
 	right 0
 	bottom 0
-	.header
+	padding-top 119px
+	padding-bottom 55px
+	.refresh
 		position fixed
-		left 0
-		top 0
-		z-index 9999
-		width 100%
-		height 40px
-		line-height 40px
-		background-color #26a2ff
+		z-index 999
+		right 20px
+		bottom 70px
+		width 46px
+		height 46px
+		line-height 46px
 		color #ffffff
-		font-size 14px
-		display flex
-		.notice
-			flex 0 0 90px
-			padding-left 10px
-		.tab-segment
-			flex 1
-			display flex
-			.left
-				flex 1
-				padding-left 10px
-				padding-top 7px
-				div
-					height 26px
-					line-height 26px
-					text-align center
-					border-top-left-radius 4px
-					border-bottom-left-radius 4px
-					border 1px solid #ffffff
-					border-right none
-					&.active
-						color #26a2ff
-						background-color #ffffff
-						border none
-			.right
-				flex 1
-				padding-right 10px
-				padding-top 7px
-				div
-					height 26px
-					line-height 26px
-					text-align center
-					border-top-right-radius 4px
-					border-bottom-right-radius 4px
-					border 1px solid #ffffff
-					border-left none
-					&.active
-						color #26a2ff
-						background-color #ffffff
-						border none
-		.refresh
-			flex 0 0 90px
-			padding-left 60px
+		text-align center
+		font-size 18px
+		border-radius 100%
+		background-color #26a2ff
+		box-shadow 0 2px 4px rgba(0,0,0,.4)
 	.platform-tab
 		position fixed
 		left 0
 		top 40px
-		z-index 9999
+		z-index 999
 		width 100%
 		height 40px
 		background-color #ffffff
@@ -354,6 +198,11 @@ export default {
 				position absolute
 				left 0
 				bottom 0
+	.navbar
+		position fixed
+		left 0
+		width 100%
+		z-index 999
 	.logo
 		display flex
 		align-items center
@@ -365,9 +214,4 @@ export default {
 		img
 			display block
 			width 22px
-	.navbar
-		position fixed
-		left 0
-		width 100%
-		z-index 9999
 </style>

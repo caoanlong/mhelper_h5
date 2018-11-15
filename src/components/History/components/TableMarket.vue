@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <img class="logo" :src="rowData.image"/>
-        <div class="name">{{rowData.name}}</div>
+        <div class="name">{{rowData.name.split('/')[0]}}</div>
     </div>
 </template>
 

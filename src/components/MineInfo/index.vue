@@ -1,7 +1,10 @@
 <template>
     <div class="container">
         <mt-header fixed :title="$route.meta.title">
-			<div slot="left" class="back" @click="back"></div>
+			<div slot="left" @click="back">
+                <svg-icon icon-class="arrowleft"></svg-icon>
+                <span>返回</span>
+            </div>
 		</mt-header>
         <div class="member-info">
             <div class="title">头像</div>

@@ -12,8 +12,8 @@ import { VTable, VPagination } from 'vue-easytable'
 
 import LyTab from 'ly-tab'
 import App from './App'
-import TableMarket from './components/Home/components/TableMarket'
-import TablePrice from './components/Home/components/TablePrice'
+import TableMarket from './components/History/components/TableMarket'
+import TablePrice from './components/History/components/TablePrice'
 import router from './router'
 
 // icons

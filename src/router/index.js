@@ -4,7 +4,7 @@ import Layout from '../components/Layout'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
 	routes: [
 		{
 			path: '/login',
@@ -19,14 +19,26 @@ export default new Router({
 				{
 					path: '/',
 					name: 'home',
-					meta: { title: '首页', hasTab: true },
+					meta: { title: 'MHelper', hasTab: true },
 					component: () => import('../components/Home')
 				},
 				{
-					path: '/raiders',
-					name: 'raiders',
+					path: '/history',
+					name: 'history',
+					meta: { title: '历史行情' },
+					component: () => import('../components/History')
+				},
+				{
+					path: '/movebricks',
+					name: 'movebricks',
+					meta: { title: '搬砖分析' },
+					component: () => import('../components/MoveBricks')
+				},
+				{
+					path: '/news',
+					name: 'news',
 					meta: { title: '资讯', hasTab: true },
-					component: () => import('../components/Raiders')
+					component: () => import('../components/News')
 				},
 				{
 					path: '/mine',
@@ -44,3 +56,26 @@ export default new Router({
 		}
 	]
 })
+
+router.beforeEach((to, from ,next) => {
+	if (localStorage.getItem('token') && localStorage.getItem('token') != 'undefined') {
+        if (to.path === '/login') {
+            next({ path: '/' })
+        } else {
+            next()
+        }
+    } else {
+        /* has no token*/
+		if (to.path === '/login' 
+			|| to.path === '/' 
+			|| to.path === '/history'
+			|| to.path === '/movebricks'
+			|| to.path === '/news') {
+            next()
+        } else {
+            next('/login')
+        }
+    }
+})
+
+export default router
