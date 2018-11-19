@@ -2,10 +2,20 @@ import Base from './Base'
 import request from '../utils/request'
 
 class Weixin extends Base {
-    getOpenID() {
+    getOpenID(params) {
         return new Promise((resolve, reject) => {
             this.request({
-                url: this.baseUrl + 'getOpenID',
+                url: this.baseUrl + '/getOpenID',
+                params
+            }).then(res => {
+                resolve(res.data.data || res.data || res)
+            }).catch(err => reject(err))
+        })
+    }
+    getUserInfo(params) {
+        return new Promise((resolve, reject) => {
+            this.request({
+                url: this.baseUrl + '/getUserInfo',
                 params
             }).then(res => {
                 resolve(res.data.data || res.data || res)

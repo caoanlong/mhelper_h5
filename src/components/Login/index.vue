@@ -5,8 +5,8 @@
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
 		</mt-header>
-        <mt-field label="手机号" placeholder="请输入手机号" v-model="member.mobile"></mt-field>
-        <mt-field label="验证码" placeholder="请输入验证码" v-model="member.vcode">
+        <mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="member.cellphone"></mt-field>
+        <mt-field label="验证码" placeholder="请输入验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.vcode">
             <mt-button size="small" @click="getVcode">获取验证码</mt-button>
         </mt-field>
         <div class="login">
@@ -17,21 +17,46 @@
 
 <script>
 import { Indicator, Toast } from 'mint-ui'
+import Login from '../../api/Login'
 export default {
     data() {
         return {
             member: {
-                mobile: '',
+                cellphone: '',
                 vcode: ''
             }
         }
     },
     methods: {
         getVcode() {
-            Toast('暂未开放！')
+            if (!this.member.cellphone) {
+                Toast('请输入手机号')
+                return
+            }
+            Login.getICode({
+                cellphone: this.member.cellphone
+            }).then(res => {
+                console.log(res)
+                Toast('验证码：' + res)
+            })
+            
         },
         login() {
-            Toast('暂未开放！')
+            if (!this.member.cellphone) {
+                Toast('请输入手机号')
+                return
+            }
+            if (!this.member.vcode) {
+                Toast('请输入验证码')
+                return
+            }
+            Login.login({
+                cellphone: this.member.cellphone,
+
+            }).then(res => {
+                console.log(res)
+                Toast('验证码：' + res)
+            })
         },
 		back() {
 			this.$router.go(-1)
