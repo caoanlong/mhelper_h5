@@ -51,11 +51,10 @@ export default {
                 return
             }
             Login.login({
-                cellphone: this.member.cellphone,
-
+                cellphone: this.member.cellphone
             }).then(res => {
                 console.log(res)
-                Toast('验证码：' + res)
+                // Toast('验证码：' + res)
             })
         },
 		back() {
