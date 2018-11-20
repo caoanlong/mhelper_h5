@@ -23,7 +23,9 @@
             <div class="down">￥{{(marketCoin.price).mul(7)}}</div>
         </div>
         <div class="item three">
-            <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'">{{marketCoin.change}}%</div>
+            <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'">
+                {{marketCoin.platform == 'eunex' ? (marketCoin.change * 100).toFixed(2) : marketCoin.change}}%
+            </div>
         </div>
     </div>
 </template>

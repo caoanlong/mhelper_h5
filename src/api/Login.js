@@ -23,6 +23,17 @@ class Login extends Base {
             data
         })
     }
+
+    registry(data) {
+        if (!this.isClick) return Promise.reject('重复提交！')
+        this.isClick = false
+        setTimeout(() => { this.isClick = true }, this.delay)
+        return this.request({
+            url: this.baseUrl + '/registry',
+            method: 'post',
+            data
+        })
+    }
 }
 
 export default new Login('/login', request)

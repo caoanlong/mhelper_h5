@@ -143,6 +143,7 @@ export default {
 									volume: volume > 1000 
 										? (volume/1000).toFixed(2) + '万' 
 										: volume.toFixed(2),
+									platform: market.platform
 								}
 							}
 						}
@@ -152,7 +153,7 @@ export default {
 				const sortData = []
 				for (let n = 0; n < SORTS.length; n++) {
 					for (let z = 0; z < data.length; z++) {
-						if (SORTS[n] == data[z].name.split('/')[0]){
+						if (data[z].name.split('/')[0].includes(SORTS[n])){
 							sortData.push(data[z])
 						}
 					}

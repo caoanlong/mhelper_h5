@@ -1,8 +1,8 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" v-if="rowData[field]">
         <div class="change"
             :style="{'background': rowData[field].change > 0 ? '#5cb85c' : '#d9534f'}">
-            {{rowData[field].change}}%
+            {{rowData[field].platform == 'eunex' ? (rowData[field].change * 100).toFixed(2) : rowData[field].change}}%
         </div>
         <div class="price">{{rowData[field].price}}</div>
         <div class="priceRMB">￥{{rowData[field].priceRMB}}</div>
@@ -36,8 +36,8 @@ export default {
         margin-top 5px
         line-height 20px
         text-align center
-        font:-size 12px
-        color:#ffffff
+        font-size 12px
+        color #ffffff
         border-radius 3px
     .price
         text-align left

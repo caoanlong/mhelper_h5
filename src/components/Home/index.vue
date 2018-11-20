@@ -105,7 +105,7 @@ export default {
 			const sortData = []
 			for (let i = 0; i < SORTS.length; i++) {
 				for (let x = 0; x < list.length; x++) {
-					if (SORTS[i] == list[x].name.split('/')[0]) {
+					if (list[x].name.split('/')[0].includes(SORTS[i])) {
 						sortData.push(list[x])
 					}
 				}

@@ -13,6 +13,12 @@ const router = new Router({
 			component: () => import('../components/Login')
 		},
 		{
+			path: '/register',
+			name: 'register',
+			meta: { title: '注册' },
+			component: () => import('../components/Register')
+		},
+		{
 			path: '',
 			component: Layout,
 			children: [
@@ -59,14 +65,14 @@ const router = new Router({
 
 router.beforeEach((to, from ,next) => {
 	if (localStorage.getItem('token') && localStorage.getItem('token') != 'undefined') {
-        if (to.path === '/login') {
+        if (to.path === '/login' || to.path === '/register') {
             next({ path: '/' })
         } else {
             next()
         }
     } else {
         /* has no token*/
-		if (to.path === '/login' 
+		if (to.path === '/login' || to.path === '/register'
 			|| to.path === '/' 
 			|| to.path === '/history'
 			|| to.path === '/movebricks'
