@@ -3,28 +3,36 @@
 		<mt-header fixed :title="$route.meta.title"></mt-header>
 		<router-link tag="div" class="member-info" to="mineinfo">
 			<div class="avatar">
-				<img src="../../assets/defaultAvatar.png" alt="">
+				<img :src="user.avator ? user.avator : require('../../assets/defaultAvatar.png')" alt="">
 			</div>
 			<div class="info">
-				<div class="name">小明</div>
-				<div class="mobile">13049497395</div>
+				<div class="name">{{user.nickname}}</div>
+				<div class="mobile">{{user.cellphone}}</div>
 			</div>
 			<i class="mint-cell-allow-right"></i>
 		</router-link>
-		<mt-cell title="等级" value="黄金会员" to="mineinfo" is-link></mt-cell>
+		<mt-cell title="等级" value="免费用户" to="mineinfo" is-link></mt-cell>
 		<mt-cell title="业绩" to="http://www.baidu.com" is-link></mt-cell>
-		<mt-cell title="贡献值" value="125" to="http://www.baidu.com" is-link></mt-cell>
+		<mt-cell title="贡献值" value="0" to="http://www.baidu.com" is-link></mt-cell>
 		<mt-cell title="银行卡" to="http://www.baidu.com" is-link></mt-cell>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
 	name: "Mine",
 	data() {
 		return {
-			
+			user: {}
 		}
+	},
+	computed: {
+		...mapGetters(['userInfo'])
+	},
+	created() {
+		this.$store.dispatch('getUserInfo')
+		this.user = this.userInfo
 	}
 }
 </script>
@@ -48,6 +56,7 @@ export default {
 			img
 				display block
 				width 60px
+				border-radius 30px
 				margin 10px 0 0 10px
 		.info
 			flex 1

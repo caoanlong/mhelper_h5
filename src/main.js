@@ -15,6 +15,7 @@ import App from './App'
 import TableMarket from './components/History/components/TableMarket'
 import TablePrice from './components/History/components/TablePrice'
 import router from './router'
+import store from './store'
 
 // icons
 import './assets/icons'
@@ -38,6 +39,7 @@ Vue.component('table-price', TablePrice)
 new Vue({
 	el: '#app',
 	router,
+	store,
 	components: { App },
 	template: '<App/>'
 })

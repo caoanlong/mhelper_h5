@@ -56,6 +56,13 @@ export default {
                 Toast('请输入验证码')
                 return
             }
+            const wxUserInfo = localStorage.getItem('wxUserInfo')
+            if (wxUserInfo) {
+                const wxUser = JSON.parse(wxUserInfo)
+                this.member.nickName = wxUser.nickname
+                this.member.avator = wxUser.headimgurl
+                this.member.openid = wxUser.openid
+            }
             Login.registry(this.member).then(res => {
                 console.log(res.data)
                 Toast(res.data.msg)

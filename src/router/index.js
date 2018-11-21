@@ -57,6 +57,12 @@ const router = new Router({
 					name: 'mineinfo',
 					meta: { title: '个人信息' },
 					component: () => import('../components/MineInfo')
+				},
+				{
+					path: '/modify',
+					name: 'modify',
+					meta: { title: '修改个人信息' },
+					component: () => import('../components/MineInfo/components/Modify')
 				}
 			]
 		}

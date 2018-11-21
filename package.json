@@ -18,7 +18,8 @@
     "vue": "^2.5.2",
     "vue-easytable": "^1.7.1",
     "vue-pull-to": "^0.1.6",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

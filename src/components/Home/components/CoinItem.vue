@@ -41,10 +41,23 @@ export default {
 <style lang="stylus" scoped>
 .wrapper
     display flex
+    position relative
     height 60px
     padding 5px
     background-color #ffffff
-    border-bottom 1px solid #ddd
+    &:after
+        position absolute
+        bottom 0
+        left 0
+        content " "
+        display block
+        height 1px
+        width 100%
+        border-bottom 1px solid #e2e2e2
+        -webkit-transform-origin 0 100%
+        transform-origin 0 100%
+        -webkit-transform scaleY(0.5)
+        transform scaleY(0.5)
     .first
         flex 0 0 50px
         display flex

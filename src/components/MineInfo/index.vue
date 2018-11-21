@@ -1,29 +1,45 @@
 <template>
     <div class="container">
         <mt-header fixed :title="$route.meta.title">
-			<div slot="left" @click="back">
-                <svg-icon icon-class="arrowleft"></svg-icon>
-                <span>返回</span>
-            </div>
+			<router-link to="" slot="left" @click.native="back">
+				<mt-button icon="back">返回</mt-button>
+			</router-link>
 		</mt-header>
         <div class="member-info">
             <div class="title">头像</div>
 			<div class="avatar">
-				<img src="../../assets/defaultAvatar.png" alt="">
+				<img :src="user.avator ? user.avator : require('../../assets/defaultAvatar.png')" alt="">
 			</div>
 			<i class="mint-cell-allow-right"></i>
 		</div>
-		<mt-cell title="昵称" value="小明" to="http://www.baidu.com" is-link></mt-cell>
-		<mt-cell title="手机号" value="13049497395" to="http://www.baidu.com" is-link></mt-cell>
+		<mt-cell title="昵称" :value="user.nickname" :to="{name: 'modify', query: {name: '昵称'}}" is-link></mt-cell>
+		<mt-cell title="手机号" :value="user.cellphone" :to="{name: 'modify', query: {name: '手机号'}}" is-link></mt-cell>
 		<div class="logout">
-			<mt-button type="danger" style="width:100%">退出</mt-button>
+			<mt-button type="danger" style="width:100%" @click="loginOut">退出</mt-button>
 		</div>
     </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
+	data() {
+		return {
+			user: {}
+		}
+	},
+	computed: {
+		...mapGetters(['userInfo'])
+	},
+	created() {
+		this.user = this.userInfo
+	},
     methods: {
+		loginOut() {
+			this.$store.dispatch('loginOut').then(() => {
+				this.$router.push({name: 'login'})
+			})
+		},
 		back() {
 			this.$router.go(-1)
 		}
@@ -73,6 +89,7 @@ export default {
 				top 10px
 				display block
 				width 60px
+				border-radius 30px
 	.logout
 		padding 20px 10px
 </style>

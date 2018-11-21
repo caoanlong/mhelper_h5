@@ -42,7 +42,9 @@ export default {
             Login.login(this.member).then(res => {
                 Toast(res.data.msg)
                 localStorage.setItem('token', res.headers['authorization'])
-                this.$router.push({name: 'home'})
+                this.$store.dispatch('getUserInfo').then(() => {
+                    this.$router.push({name: 'home'})
+                })
             })
         },
         goRegister() {

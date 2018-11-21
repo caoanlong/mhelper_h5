@@ -171,8 +171,20 @@ export default {
 		width 100%
 		height 40px
 		background-color #ffffff
-		border 1px solid #dddddd
 		display flex
+		&:after
+			position absolute
+			bottom 0
+			left 0
+			content " "
+			display block
+			height 1px
+			width 100%
+			border-bottom 1px solid #e2e2e2
+			-webkit-transform-origin 0 100%
+			transform-origin 0 100%
+			-webkit-transform scaleY(0.5)
+			transform scaleY(0.5)
 		.platform-item
 			flex 1
 			&.mbaex-logo
