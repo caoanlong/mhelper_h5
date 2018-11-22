@@ -3,11 +3,11 @@
 		<mt-header fixed :title="$route.meta.title"></mt-header>
 		<router-link tag="div" class="member-info" to="mineinfo">
 			<div class="avatar">
-				<img :src="user.avator ? user.avator : require('../../assets/defaultAvatar.png')" alt="">
+				<img :src="(user && user.avator) ? user.avator : require('../../assets/defaultAvatar.png')" alt="">
 			</div>
 			<div class="info">
-				<div class="name">{{user.nickname}}</div>
-				<div class="mobile">{{user.cellphone}}</div>
+				<div class="name">{{user && user.nickname}}</div>
+				<div class="mobile">{{user && user.cellphone}}</div>
 			</div>
 			<i class="mint-cell-allow-right"></i>
 		</router-link>

@@ -7,12 +7,13 @@
         </mt-header>
         <mt-field :label="$route.query.name" placeholder="请输入..." v-model="form"></mt-field>
         <div class="modify">
-			<mt-button type="primary" style="width:100%">提交</mt-button>
+			<mt-button type="primary" style="width:100%" @click="updateCustomer">提交</mt-button>
 		</div>
     </div>
 </template>
 
 <script>
+import Customer from '../../../api/Customer'
 export default {
     data() {
         return {
@@ -20,6 +21,15 @@ export default {
         }
     },
     methods: {
+        updateCustomer() {
+            Customer.update({
+                customerModel: {
+                    [this.$route.query.type]: this.form
+                }
+            }).then(res => {
+                this.$router.push({name: 'mineinfo'})
+            })
+        },
         back() {
 			this.$router.go(-1)
 		}
