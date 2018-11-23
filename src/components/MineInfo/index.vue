@@ -13,10 +13,10 @@
 			<i class="mint-cell-allow-right"></i>
 		</div>
 		<mt-cell title="昵称" :value="user.nickname" :to="{
-			name: 'modify', query: {name: '昵称', type: 'nickname'}
+			name: 'modify', query: {name: '昵称', type: 'nickname', value: user.nickname}
 			}" is-link></mt-cell>
 		<mt-cell title="手机号" :value="user.cellphone" :to="{
-			name: 'modify', query: {name: '手机号', type: 'cellphone'}
+			name: 'modifymobile', query: {value: user.cellphone}
 			}" is-link></mt-cell>
 		<div class="logout">
 			<mt-button type="danger" style="width:100%" @click="loginOut">退出</mt-button>
@@ -36,7 +36,9 @@ export default {
 		...mapGetters(['userInfo'])
 	},
 	created() {
-		this.user = this.userInfo
+		this.$store.dispatch('getUserInfo').then(() => {
+			this.user = this.userInfo
+		})
 	},
     methods: {
 		loginOut() {
@@ -45,7 +47,7 @@ export default {
 			})
 		},
 		back() {
-			this.$router.go(-1)
+			this.$router.push({name: 'mine'})
 		}
 	}
 }

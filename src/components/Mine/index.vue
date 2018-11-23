@@ -11,10 +11,12 @@
 			</div>
 			<i class="mint-cell-allow-right"></i>
 		</router-link>
-		<mt-cell title="等级" value="免费用户" to="mineinfo" is-link></mt-cell>
-		<mt-cell title="业绩" to="http://www.baidu.com" is-link></mt-cell>
-		<mt-cell title="贡献值" value="0" to="http://www.baidu.com" is-link></mt-cell>
-		<mt-cell title="银行卡" to="http://www.baidu.com" is-link></mt-cell>
+		<mt-cell title="等级" value="免费用户" to="level" is-link></mt-cell>
+		<mt-cell title="业绩" to="performance" is-link></mt-cell>
+		<mt-cell title="贡献值" value="0" to="contribution" is-link></mt-cell>
+		<mt-cell title="购买记录" to="purchasehistory" is-link></mt-cell>
+		<mt-cell title="结算" to="settlement" is-link></mt-cell>
+		<mt-cell title="银行卡" to="bankcard" is-link></mt-cell>
 	</div>
 </template>
 
@@ -31,8 +33,9 @@ export default {
 		...mapGetters(['userInfo'])
 	},
 	created() {
-		this.$store.dispatch('getUserInfo')
-		this.user = this.userInfo
+		this.$store.dispatch('getUserInfo').then(() => {
+			this.user = this.userInfo
+		})
 	}
 }
 </script>

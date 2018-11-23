@@ -20,6 +20,9 @@ export default {
             form: ''
         }
     },
+    created() {
+        this.form = this.$route.query.value
+    },
     methods: {
         updateCustomer() {
             Customer.update({
@@ -31,7 +34,7 @@ export default {
             })
         },
         back() {
-			this.$router.go(-1)
+			this.$router.push({name: 'mineinfo'})
 		}
     }
 }

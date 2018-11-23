@@ -27,42 +27,71 @@ const router = new Router({
 					name: 'home',
 					meta: { title: 'MHelper', hasTab: true },
 					component: () => import('../components/Home')
-				},
-				{
+				},{
 					path: '/history',
 					name: 'history',
 					meta: { title: '历史行情' },
 					component: () => import('../components/History')
-				},
-				{
+				},{
 					path: '/movebricks',
 					name: 'movebricks',
 					meta: { title: '搬砖分析' },
 					component: () => import('../components/MoveBricks')
-				},
-				{
+				},{
 					path: '/news',
 					name: 'news',
 					meta: { title: '资讯', hasTab: true },
 					component: () => import('../components/News')
-				},
-				{
+				},{
 					path: '/mine',
 					name: 'mine',
 					meta: { title: '我的', hasTab: true },
 					component: () => import('../components/Mine')
-				},
-				{
+				},{
 					path: '/mineinfo',
 					name: 'mineinfo',
 					meta: { title: '个人信息' },
 					component: () => import('../components/MineInfo')
-				},
-				{
+				},{
 					path: '/modify',
 					name: 'modify',
 					meta: { title: '修改个人信息' },
 					component: () => import('../components/MineInfo/components/Modify')
+				},{
+					path: '/modifymobile',
+					name: 'modifymobile',
+					meta: { title: '修改手机号' },
+					component: () => import('../components/MineInfo/components/ModifyMobile')
+				},{
+					path: '/level',
+					name: 'level',
+					meta: { title: '会员等级' },
+					component: () => import('../components/Level')
+				},{
+					path: '/performance',
+					name: 'performance',
+					meta: { title: '业绩' },
+					component: () => import('../components/Performance')
+				},{
+					path: '/contribution',
+					name: 'contribution',
+					meta: { title: '贡献' },
+					component: () => import('../components/Contribution')
+				},{
+					path: '/purchasehistory',
+					name: 'purchasehistory',
+					meta: { title: '购买记录' },
+					component: () => import('../components/PurchaseHistory')
+				},{
+					path: '/settlement',
+					name: 'settlement',
+					meta: { title: '结算' },
+					component: () => import('../components/Settlement')
+				},{
+					path: '/bankcard',
+					name: 'bankcard',
+					meta: { title: '银行卡' },
+					component: () => import('../components/BankCard')
 				}
 			]
 		}
