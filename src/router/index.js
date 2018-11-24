@@ -43,6 +43,11 @@ const router = new Router({
 					meta: { title: '资讯', hasTab: true },
 					component: () => import('../components/News')
 				},{
+					path: '/newsdetail',
+					name: 'newsdetail',
+					meta: { title: '资讯详情' },
+					component: () => import('../components/News/components/NewsDetail')
+				},{
 					path: '/mine',
 					name: 'mine',
 					meta: { title: '我的', hasTab: true },

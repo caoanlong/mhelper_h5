@@ -5,6 +5,11 @@
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
 		</mt-header>
+        <mt-navbar v-model="selected">
+            <mt-tab-item :id="1">全部</mt-tab-item>
+            <mt-tab-item :id="2">增加</mt-tab-item>
+            <mt-tab-item :id="3">减少</mt-tab-item>
+        </mt-navbar>
     </div>
 </template>
 
@@ -12,7 +17,7 @@
 export default {
     data() {
         return {
-
+            selected: 1
         }
     },
     methods: {
@@ -24,5 +29,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-
+.container
+    padding-top 40px
 </style>

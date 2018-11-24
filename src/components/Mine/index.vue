@@ -14,14 +14,15 @@
 		<mt-cell title="等级" value="免费用户" to="level" is-link></mt-cell>
 		<mt-cell title="业绩" to="performance" is-link></mt-cell>
 		<mt-cell title="贡献值" value="0" to="contribution" is-link></mt-cell>
-		<mt-cell title="购买记录" to="purchasehistory" is-link></mt-cell>
-		<mt-cell title="结算" to="settlement" is-link></mt-cell>
-		<mt-cell title="银行卡" to="bankcard" is-link></mt-cell>
+		<mt-cell title="购买记录" is-link @click.native="hope"></mt-cell>
+		<mt-cell title="结算" is-link @click.native="hope"></mt-cell>
+		<mt-cell title="银行卡" is-link @click.native="hope"></mt-cell>
 	</div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { Toast } from 'mint-ui'
 export default {
 	name: "Mine",
 	data() {
@@ -36,6 +37,11 @@ export default {
 		this.$store.dispatch('getUserInfo').then(() => {
 			this.user = this.userInfo
 		})
+	},
+	methods: {
+		hope() {
+			Toast('敬请期待！')
+		}
 	}
 }
 </script>

@@ -9,10 +9,6 @@
 				</div>
 			</a>
 		</div>
-		<div class="qrcode">
-			<img class="qrcode-img" src="../../assets/qrcode.jpg" alt="">
-			<p class="qrcode-txt">扫一扫关注北纬兔子公众号</p>
-		</div>
 	</div>
 </template>
 
@@ -111,16 +107,6 @@ export default {
 	width 100%
 	padding-top 40px
 	padding-bottom 55px
-	.qrcode
-		width 100%
-		padding 20px 0 50px 0
-		.qrcode-img
-			display block
-			width 200px
-			height 200px
-			margin 0 auto
-		.qrcode-txt
-			text-align center
 	.article_list
 		width 100%
 		.list_item
