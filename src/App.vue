@@ -19,21 +19,17 @@ export default {
 			title: '华克金等币盯盘利器',
 			desc: '华克金、榴莲币等行情查看、行情通知、交易指导、资产管理，行情从不错过。',
 			imgUrl: 'http://47.106.171.37:3030/image/uploads/Mxglogo.png',
-			link: 'https://m.neworldxo.com/#/'
+			link: 'https://m.mhelper.co/#/'
 		}
 	},
 	watch: {
 		$route() {
-			if (this.userInfo) {
-				console.log(this.userInfo)
-				this.link = `https://m.neworldxo.com/#/?recommender=${this.userInfo.userid}`
-			}
 			this.getUserInfo()
-			this.getWeixinConfig()
+			if (isWeixin()) this.getWeixinConfig()
 		}
 	},
 	mounted() {
-		this.getWeixinConfig()
+		if (isWeixin()) this.getWeixinConfig()
 	},
 	created() {
 		this.getUserInfo()
@@ -77,7 +73,7 @@ export default {
 			const userInfo = localStorage.getItem('userInfo')
 			if (userInfo) {
 				this.userInfo = JSON.parse(userInfo)
-				this.link = `https://m.neworldxo.com/#/?recommender=${this.userInfo.userid}`
+				this.link = `https://m.mhelper.co/#/?recommender=${this.userInfo.userid}`
 			}
 		},
 		getWeixinConfig() {
@@ -103,8 +99,8 @@ export default {
 				wx.ready(() => {
 					// 朋友圈分享
 					wx.onMenuShareTimeline({
-						title: this.title + '，' + this.desc, // 分享标题
-						desc: this.desc, // 分享描述
+						title: this.title, // 分享标题
+						desc: this.link, // 分享描述
 						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						success: function () {
@@ -117,7 +113,7 @@ export default {
 					// 转发给朋友
 					wx.onMenuShareAppMessage({
 						title: this.title, // 分享标题
-						desc: this.desc, // 分享描述
+						desc: this.link, // 分享描述
 						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						type: '', // 分享类型,music、video或link，不填默认为link
@@ -132,7 +128,7 @@ export default {
 					// 分享到QQ
 					wx.onMenuShareQQ({
 						title: this.title, // 分享标题
-						desc: this.desc, // 分享描述
+						desc: this.link, // 分享描述
 						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						success: function () {
