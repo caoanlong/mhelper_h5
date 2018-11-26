@@ -16,13 +16,18 @@ export default {
 		return {
 			wxUserInfo: '',
 			userInfo: '',
-			title: '华克金等币看盘盯盘助手',
-			desc: '华克金等币看盘盯盘助手',
-			imgUrl: 'http://47.106.171.37:3030/image/uploads/logo.png'
+			title: '华克金等币盯盘利器',
+			desc: '华克金、榴莲币等行情查看、行情通知、交易指导、资产管理，行情从不错过。',
+			imgUrl: 'http://47.106.171.37:3030/image/uploads/Mxglogo.png',
+			link: 'https://m.neworldxo.com/#/'
 		}
 	},
 	watch: {
 		$route() {
+			if (this.userInfo) {
+				console.log(this.userInfo)
+				this.link = `https://m.neworldxo.com/#/?recommender=${this.userInfo.userid}`
+			}
 			this.getUserInfo()
 			this.getWeixinConfig()
 		}
@@ -41,7 +46,7 @@ export default {
 				} else {
 					window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize
 						?appid=${APPID}
-						&redirect_uri=${encodeURIComponent(location.href)}
+						&redirect_uri=${encodeURIComponent(this.link)}
 						&response_type=code
 						&scope=snsapi_userinfo
 						&state=index
@@ -70,7 +75,10 @@ export default {
 		},
 		getUserInfo() {
 			const userInfo = localStorage.getItem('userInfo')
-			if (userInfo) this.userInfo = JSON.parse(userInfo)
+			if (userInfo) {
+				this.userInfo = JSON.parse(userInfo)
+				this.link = `https://m.neworldxo.com/#/?recommender=${this.userInfo.userid}`
+			}
 		},
 		getWeixinConfig() {
 			const url = location.href
@@ -93,15 +101,11 @@ export default {
 					] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 				})
 				wx.ready(() => {
-					let link = `https://m.neworldxo.com/#/`
-					if (this.userInfo) {
-						link = `https://m.neworldxo.com/#/?from=${this.userInfo.userid}`
-					}
 					// 朋友圈分享
 					wx.onMenuShareTimeline({
 						title: this.title + '，' + this.desc, // 分享标题
 						desc: this.desc, // 分享描述
-						link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						success: function () {
 						// 用户确认分享后执行的回调函数
@@ -114,7 +118,7 @@ export default {
 					wx.onMenuShareAppMessage({
 						title: this.title, // 分享标题
 						desc: this.desc, // 分享描述
-						link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						type: '', // 分享类型,music、video或link，不填默认为link
 						dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -129,7 +133,7 @@ export default {
 					wx.onMenuShareQQ({
 						title: this.title, // 分享标题
 						desc: this.desc, // 分享描述
-						link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						success: function () {
 						// 用户确认分享后执行的回调函数

@@ -1,18 +1,20 @@
 <template>
     <div class="user">
         <div class="avatar">
-            <img class="avatar-img" :src="require('../../../assets/defaultAvatar.png')" alt="">
+            <img class="avatar-img" :src="user.avator ? user.avator : require('../../../assets/defaultAvatar.png')" alt="">
         </div>
         <div class="user-info">
-            <div class="user-name">小王</div>
-            <div class="user-mobile">13049497395</div>
+            <div class="user-name">{{user.nickname}}</div>
+            <div class="user-mobile">{{user.cellphone}}</div>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    
+    props: {
+        user: Object
+    }
 }
 </script>
 
@@ -22,7 +24,6 @@ export default {
     width 100%
     height 70px
     background-color #ffffff
-    margin-bottom 10px
     background-image linear-gradient(0deg, #d9d9d9, #d9d9d9 50%, transparent 50%)
     background-size 100% 1px
     background-repeat no-repeat

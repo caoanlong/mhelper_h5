@@ -12,6 +12,8 @@
         <mt-field label="验证码" placeholder="请输入验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.iCode">
             <mt-button size="small" @click="getVcode">获取验证码</mt-button>
         </mt-field>
+        <mt-field label="邀请码" type="number" :value="recommender" v-if="recommender" disabled>
+        </mt-field>
         <div class="login">
 			<mt-button type="primary" style="width:100%" @click="register">注册</mt-button>
 		</div>
@@ -30,7 +32,15 @@ export default {
                 nickName: '',
                 openid: '',
                 avator: ''
-            }
+            },
+            recommender: ''
+        }
+    },
+    created() {
+        const recommender = localStorage.getItem('recommender')
+        if (recommender) {
+            this.recommender = recommender
+            Toast('邀请码：' + this.recommender)
         }
     },
     methods: {
@@ -63,6 +73,7 @@ export default {
                 this.member.avator = wxUser.headimgurl
                 this.member.openid = wxUser.openid
             }
+            if (this.recommender) this.member.recommender = this.recommender
             Login.registry(this.member).then(res => {
                 console.log(res.data)
                 Toast(res.data.msg)
