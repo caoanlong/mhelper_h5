@@ -112,11 +112,7 @@ router.beforeEach((to, from ,next) => {
         }
     } else {
         /* has no token*/
-		if (to.path === '/login' || to.path === '/register'
-			|| to.path === '/' 
-			|| to.path === '/history'
-			|| to.path === '/movebricks'
-			|| to.path === '/news') {
+		if (to.path === '/login' || to.path === '/register') {
             next()
         } else {
             next('/login')

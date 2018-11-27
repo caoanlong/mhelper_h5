@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <mt-header fixed :title="$route.meta.title">
-			<router-link to="" slot="left" @click.native="back">
+			<!-- <router-link to="" slot="left" @click.native="back">
 				<mt-button icon="back">返回</mt-button>
-			</router-link>
+			</router-link> -->
             <router-link to="/register" slot="right">
 				<mt-button>注册</mt-button>
 			</router-link>

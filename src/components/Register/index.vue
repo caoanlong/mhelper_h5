@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <mt-header fixed :title="$route.meta.title">
-			<router-link to="" slot="left" @click.native="back">
+			<!-- <router-link to="" slot="left" @click.native="back">
 				<mt-button icon="back">返回</mt-button>
-			</router-link>
+			</router-link> -->
             <router-link to="/login" slot="right">
 				<mt-button>登录</mt-button>
 			</router-link>
@@ -75,9 +75,11 @@ export default {
             }
             if (this.recommender) this.member.recommender = this.recommender
             Login.registry(this.member).then(res => {
-                console.log(res.data)
                 Toast(res.data.msg)
-                this.$router.push({name: 'login'})
+                localStorage.setItem('token', res.headers['authorization'])
+                this.$store.dispatch('getUserInfo').then(() => {
+                    this.$router.push({name: 'home'})
+                })
             })
         },
 		back() {
