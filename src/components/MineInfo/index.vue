@@ -5,13 +5,13 @@
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
 		</mt-header>
-        <div class="member-info">
+        <router-link tag="div" class="member-info" to="avatar">
             <div class="title">头像</div>
 			<div class="avatar">
 				<img :src="user.avator ? user.avator : require('../../assets/defaultAvatar.png')" alt="">
 			</div>
 			<i class="mint-cell-allow-right"></i>
-		</div>
+		</router-link>
 		<mt-cell title="昵称" :value="user.nickname" :to="{
 			name: 'modify', query: {name: '昵称', type: 'nickname', value: user.nickname}
 			}" is-link></mt-cell>

@@ -68,6 +68,11 @@ const router = new Router({
 					meta: { title: '修改手机号' },
 					component: () => import('../components/MineInfo/components/ModifyMobile')
 				},{
+					path: '/avatar',
+					name: 'avatar',
+					meta: { title: '头像' },
+					component: () => import('../components/MineInfo/components/Avatar')
+				},{
 					path: '/level',
 					name: 'level',
 					meta: { title: '会员等级' },
@@ -104,6 +109,9 @@ const router = new Router({
 })
 
 router.beforeEach((to, from ,next) => {
+	if (to.query.recommender) {
+		localStorage.setItem('recommender', to.query.recommender)
+	}
 	if (localStorage.getItem('token') && localStorage.getItem('token') != 'undefined') {
         if (to.path === '/login' || to.path === '/register') {
             next({ path: '/' })

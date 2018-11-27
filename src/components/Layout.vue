@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="width:100%;height:100%">
         <router-view></router-view>
         <mt-tabbar fixed v-model="selected" v-if="$route.meta.hasTab">
 			<mt-tab-item id="home">

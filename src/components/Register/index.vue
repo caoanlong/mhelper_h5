@@ -38,10 +38,7 @@ export default {
     },
     created() {
         const recommender = localStorage.getItem('recommender')
-        if (recommender) {
-            this.recommender = recommender
-            Toast('邀请码：' + this.recommender)
-        }
+        if (recommender) this.recommender = recommender
     },
     methods: {
         getVcode() {
@@ -52,7 +49,6 @@ export default {
             Login.getICode({
                 cellphone: this.member.cellPhone
             }).then(res => {
-                console.log(res)
                 Toast('验证码：' + res)
             })
             

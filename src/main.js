@@ -11,6 +11,8 @@ import 'vue-easytable/libs/themes-base/index.css'
 import { VTable, VPagination } from 'vue-easytable'
 
 import LyTab from 'ly-tab'
+import Croppa from 'vue-croppa'
+
 import App from './App'
 import TableMarket from './components/History/components/TableMarket'
 import TablePrice from './components/History/components/TablePrice'
@@ -23,9 +25,9 @@ import './utils/numberFixed'
 
 Vue.config.productionTip = false
 
-
 Vue.use(MintUI)
 Vue.use(LyTab)
+Vue.use(Croppa)
 
 // 注册到全局
 Vue.component(VTable.name, VTable)
