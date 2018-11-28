@@ -16,7 +16,7 @@
                 accept="image/*"
                 :width="300"
                 :height="300" 
-                :quality="2" 
+                :quality="1" 
                 :initial-image="imgUrl" 
                 @loading-end="change">
             </croppa>
@@ -54,7 +54,7 @@ export default {
             const base64 = this.myCroppa.generateDataUrl('image/jpeg')
             this.file = dataURLtoFile(base64)
 
-            const url = baseURL + "/upload/setFileUpload"
+            const url = baseURL + '/upload/setFileUpload'
 			const headers = { 'Content-type': 'multipart/form-data;charset=UTF-8' }
 			const params = formDataReq({ file: this.file })
 			axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
