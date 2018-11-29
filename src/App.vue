@@ -24,7 +24,7 @@ export default {
 	},
 	watch: {
 		$route() {
-			this.getUserInfo()
+			this.setLink()
 			if (isWeixin()) this.getWeixinConfig()
 		}
 	},
@@ -32,7 +32,7 @@ export default {
 		if (isWeixin()) this.getWeixinConfig()
 	},
 	created() {
-		this.getUserInfo()
+		this.setLink()
 		if (isWeixin()) {
 			const openid = localStorage.getItem('openid')
 			if (!openid) {
@@ -69,7 +69,7 @@ export default {
 				localStorage.setItem('wxUserInfo', JSON.stringify(res))
 			})
 		},
-		getUserInfo() {
+		setLink() {
 			const userInfo = localStorage.getItem('userInfo')
 			if (userInfo) {
 				this.userInfo = JSON.parse(userInfo)
@@ -100,7 +100,7 @@ export default {
 					// 朋友圈分享
 					wx.onMenuShareTimeline({
 						title: this.title, // 分享标题
-						desc: this.link, // 分享描述
+						desc: this.desc, // 分享描述
 						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						success: function () {
@@ -113,7 +113,7 @@ export default {
 					// 转发给朋友
 					wx.onMenuShareAppMessage({
 						title: this.title, // 分享标题
-						desc: this.link, // 分享描述
+						desc: this.desc, // 分享描述
 						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						type: '', // 分享类型,music、video或link，不填默认为link
@@ -128,7 +128,7 @@ export default {
 					// 分享到QQ
 					wx.onMenuShareQQ({
 						title: this.title, // 分享标题
-						desc: this.link, // 分享描述
+						desc: this.desc, // 分享描述
 						link: this.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 						imgUrl: this.imgUrl, // 分享图标
 						success: function () {

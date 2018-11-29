@@ -7,7 +7,7 @@
         </mt-header>
         <mt-field label="当前手机号" placeholder="请输入..." :value="curmobile" disabled></mt-field>
         <mt-field label="验证码" placeholder="请输入验证码" type="number" :attr="{ maxlength: 6 }" v-model="icode">
-            <mt-button size="small" @click="getVcode">获取验证码</mt-button>
+            <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
         <mt-field label="新手机号" placeholder="请输入..." v-model="cellphone"></mt-field>
         <div class="modify">
@@ -25,7 +25,11 @@ export default {
         return {
             curmobile: '',
             cellphone: '',
-            icode: ''
+            icode: '',
+            captcha: '',
+            wait: 60,
+			isGetVCode: false,
+			getVcodeText: '获取验证码'
         }
     },
     created() {
@@ -33,15 +37,16 @@ export default {
     },
     methods: {
         getVcode() {
+            if (this.isGetVCode) return
             if (!this.curmobile) {
                 Toast('请输入当前手机号')
                 return
             }
+            this.timeGo()
             Login.getICode({
                 cellphone: this.curmobile
             }).then(res => {
-                console.log(res)
-                Toast('验证码：' + res)
+                // Toast('验证码：' + res)
             })
             
         },
@@ -67,6 +72,24 @@ export default {
                 this.$router.push({name: 'mineinfo'})
             })
         },
+        /**
+		 * 	倒计时
+		 */
+		timeGo() {
+			if (this.wait == 0) {
+				this.getVcodeText = '重新获取'
+				this.isGetVCode = false
+				this.wait = 30
+				return
+			} else {
+				this.isGetVCode = true
+				this.getVcodeText = this.wait+'s'
+				this.wait--
+				setTimeout(() => {
+					this.timeGo()
+				}, 1000)
+			}
+		},
         back() {
 			this.$router.push({name: 'mineinfo'})
 		}

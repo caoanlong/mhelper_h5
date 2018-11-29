@@ -31,7 +31,6 @@ import Login from '../../api/Login'
 export default {
     data() {
         return {
-            captcha: '',
             member: {
                 cellPhone: '',
                 iCode: '',
@@ -39,6 +38,7 @@ export default {
                 openid: '',
                 avator: ''
             },
+            captcha: '',
             wait: 60,
 			isGetVCode: false,
 			getVcodeText: '获取验证码',
@@ -75,7 +75,7 @@ export default {
             Login.getICode({
                 cellphone: this.member.cellPhone
             }).then(res => {
-                Toast('验证码：' + res)
+                // Toast('验证码：' + res)
             })
             
         },
