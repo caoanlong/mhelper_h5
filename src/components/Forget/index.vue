@@ -1,20 +1,21 @@
 <template>
     <div class="container">
         <mt-header fixed :title="$route.meta.title">
-			<router-link to="" slot="left" @click.native="back">
+            <router-link to="" slot="left" @click.native="back">
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
 		</mt-header>
         <mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="member.cellPhone"></mt-field>
-        <!-- <mt-field label="图形验证码" placeholder="请输入图形验证码" v-model="captcha">
-            <img id="captcha" :src="baseURL + '/customer/verify'" height="45px" width="100px" @click="refreshCaptcha">
-        </mt-field> -->
         <mt-field label="短信验证码" placeholder="请输入短信验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.iCode">
             <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
-        <mt-field label="邀请码" type="number" :value="recommender" v-if="recommender" disabled></mt-field>
+        <mt-field label="新密码" placeholder="请输入新密码" :type="isShow ? '' : 'password'" v-model="member.password">
+            <div style="width:30px;color:#999;text-align:right" @click="isShow = !isShow">
+                <svg-icon :icon-class="isShow ? 'eye-open' : 'eye'"></svg-icon>
+            </div>
+        </mt-field>
         <div class="login">
-			<mt-button type="danger" style="width:100%" @click="register">注册</mt-button>
+			<mt-button type="primary" style="width:100%" @click="forget">确定</mt-button>
 		</div>
     </div>
 </template>
@@ -28,32 +29,23 @@ import Login from '../../api/Login'
 export default {
     data() {
         return {
+            isShow: false,
             member: {
                 cellPhone: '',
                 iCode: '',
-                nickName: '',
-                openid: '',
-                avator: ''
+                password: ''
             },
-            captcha: '',
             wait: 180,
 			isGetVCode: false,
 			getVcodeText: '获取验证码',
-            recommender: ''
         }
     },
     computed: {
         baseURL: () => baseURL
     },
     created() {
-        const recommender = localStorage.getItem('recommender')
-        if (recommender) this.recommender = recommender
     },
     methods: {
-        refreshCaptcha() {
-			const captchaEle = document.getElementById('captcha')
-			captchaEle.src = this.baseURL + '/customer/verify?rnd=' + new Date().getTime()
-		},
         getVcode() {
             if (this.isGetVCode) return
             if (!this.member.cellPhone) {
@@ -68,7 +60,7 @@ export default {
             })
             
         },
-        register() {
+        forget() {
             if (!this.member.cellPhone) {
                 Toast('请输入手机号')
                 return
@@ -77,21 +69,13 @@ export default {
                 Toast('请输入验证码')
                 return
             }
-            const wxUserInfo = localStorage.getItem('wxUserInfo')
-            if (wxUserInfo) {
-                const wxUser = JSON.parse(wxUserInfo)
-                this.member.nickName = wxUser.nickname
-                this.member.avator = wxUser.headimgurl
-                this.member.openid = wxUser.openid
-            }
-            if (this.recommender) this.member.recommender = this.recommender
-            Login.registry(this.member).then(res => {
-                Toast(res.data.msg)
-                localStorage.setItem('token', res.headers['authorization'])
-                this.$store.dispatch('getUserInfo').then(() => {
-                    this.$router.push({name: 'home'})
-                })
-            })
+            // Login.registry(this.member).then(res => {
+            //     Toast(res.data.msg)
+            //     localStorage.setItem('token', res.headers['authorization'])
+            //     this.$store.dispatch('getUserInfo').then(() => {
+            //         this.$router.push({name: 'home'})
+            //     })
+            // })
         },
         /**
 		 * 	倒计时

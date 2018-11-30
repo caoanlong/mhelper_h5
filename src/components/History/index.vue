@@ -1,6 +1,6 @@
 <template>
 	<div class="history-container">
-		<div class="refresh" @click="refresh">
+		<div class="refresh" @click="refresh" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
         <mt-header fixed :title="$route.meta.title">
@@ -20,12 +20,7 @@
 				@click="changePlatform('eunex')">
 			</div>
 		</div>
-		<ly-tab 
-			class="navbar"
-			:items="tabs"
-			:options="options" 
-			@change="changeTab">
-		</ly-tab>
+		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 		<v-table 
 			:title-row-height="30"
 			:row-height="90"
@@ -41,19 +36,20 @@
 <script>
 import { Indicator, Toast } from 'mint-ui'
 import moment from 'moment'
+import Tabs from '../Common/Tabs'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
 export default {
 	name: "Home",
+	components: { Tabs },
 	data() {
 		return {
-			selectedId: '',
+			wait: 10,
+			canRefresh: true,
+			selectedId: 1,
 			tabs: [],
-			options: {
-				activeColor: '#26a2ff',
-				labelKey: 'name'
-			},
+			oTabs: [],
 			platform: 'mbaex',
 			tableData: [],
 			columns: []
@@ -65,21 +61,52 @@ export default {
 	methods: {
 		changePlatform(platform) {
 			this.platform = platform
+			if (this.platform == 'mbaex') {
+				const tabs = ['USDT', 'BTC', 'MDP']
+				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+			} else if (this.platform == 'eunex') {
+				const tabs = ['USDT', 'BTC', 'ETH']
+				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				this.tabs[0] = {
+					id: 1,
+					coinId: 1,
+					name: 'USDTK',
+					code: 'USDTK',
+					coinName: 'USDTK'
+				}
+			}
+			this.selectedId = 1
 			this.getMarketHistoryList()
 		},
-		changeTab(item, index) {
-			if (this.selectedId != item.id) {
-				this.selectedId = item.id
+		changeTab(id) {
+			if (this.selectedId != id) {
+				this.selectedId = id
 				this.getMarketHistoryList()
 			}
 		},
 		refresh() {
+			if (!this.canRefresh) return
+			this.timeGo()
 			this.getMarketHistoryList()
 		},
 		getCoinList() {
 			Coin.find().then(res => {
-				this.tabs = res
-				this.selectedId = res[0].id
+				this.oTabs = res
+				if (this.platform == 'mbaex') {
+					const tabs = ['USDT', 'BTC', 'MDP']
+					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				} else if (this.platform == 'eunex') {
+					const tabs = ['USDT', 'BTC', 'ETH']
+					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+					this.tabs[0] = {
+						id: 1,
+						coinId: 1,
+						name: 'USDTK',
+						code: 'USDTK',
+						coinName: 'USDTK'
+					}
+				}
+				this.selectedId = 1
 				this.getMarketHistoryList()
 			})
 		},
@@ -163,7 +190,23 @@ export default {
 			}).catch(err => {
 				Indicator.close()
 			})
-        },
+		},
+		/**
+		 * 	倒计时
+		 */
+		timeGo() {
+			if (this.wait == 0) {
+				this.canRefresh = true
+				this.wait = 10
+				return
+			} else {
+				this.canRefresh = false
+				this.wait--
+				setTimeout(() => {
+					this.timeGo()
+				}, 1000)
+			}
+		},
         back() {
 			this.$router.go(-1)
 		}
@@ -237,6 +280,7 @@ export default {
 		font-size 18px
 		border-radius 100%
 		background-color #26a2ff
+		opacity 0.7
 		box-shadow 0 2px 4px rgba(0,0,0,.4)
 	.navbar
 		position fixed

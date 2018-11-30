@@ -7,11 +7,11 @@
 			</div>
 			<div class="info">
 				<div class="name">{{user && user.nickname}}</div>
-				<div class="mobile">{{user && user.cellphone}}</div>
+				<div class="mobile">{{user && user.cellphone}}&nbsp;&nbsp;UID:{{user && user.userid}}</div>
 			</div>
 			<i class="mint-cell-allow-right"></i>
 		</router-link>
-		<mt-cell title="等级" value="免费用户" to="level" is-link></mt-cell>
+		<mt-cell title="等级" value="普通会员" is-link @click.native="hope"></mt-cell>
 		<mt-cell title="业绩" to="performance" is-link></mt-cell>
 		<mt-cell title="贡献值" value="0" to="contribution" is-link></mt-cell>
 		<mt-cell title="购买记录" is-link @click.native="hope"></mt-cell>

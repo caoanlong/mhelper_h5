@@ -1,15 +1,16 @@
 <template>
     <div class="container">
-        <mt-header fixed :title="$route.meta.title">
-			<!-- <router-link to="" slot="left" @click.native="back">
-				<mt-button icon="back">返回</mt-button>
-			</router-link> -->
-            <router-link to="/register" slot="right">
-				<mt-button>注册</mt-button>
-			</router-link>
-		</mt-header>
+        <mt-header fixed :title="$route.meta.title"></mt-header>
         <mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="member.loginaccount"></mt-field>
-        <mt-field label="密码" placeholder="请输入密码" v-model="member.password"></mt-field>
+        <mt-field label="密码" placeholder="请输入密码" :type="isShow ? '' : 'password'" v-model="member.password">
+            <div style="width:30px;color:#999;text-align:right" @click="isShow = !isShow">
+                <svg-icon :icon-class="isShow ? 'eye-open' : 'eye'"></svg-icon>
+            </div>
+        </mt-field>
+        <div class="btns">
+            <router-link tag="div" class="register" to="/register">注册</router-link>
+            <router-link tag="div" class="forget" to="/forget">忘记密码</router-link>
+        </div>
         <div class="login">
 			<mt-button type="primary" style="width:100%" @click="login">登录</mt-button>
 		</div>
@@ -22,6 +23,7 @@ import Login from '../../api/Login'
 export default {
     data() {
         return {
+            isShow: false,
             member: {
                 loginaccount: '',
                 password: '',
@@ -47,9 +49,6 @@ export default {
                 })
             })
         },
-        goRegister() {
-            this.$router.push({ name: 'register' })
-        },
 		back() {
 			this.$router.go(-1)
 		}
@@ -59,7 +58,16 @@ export default {
 
 <style lang="stylus" scoped>
 .container
-	padding-top 40px
+    padding-top 40px
+    .btns
+        display flex
+        padding 10px
+        color #26a2ff
+        .register
+            flex 1
+        .forget
+            flex 1
+            text-align right
     .login
-		padding 20px 10px
+        padding 10px
 </style>

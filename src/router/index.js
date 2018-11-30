@@ -11,14 +11,17 @@ const router = new Router({
 			name: 'login',
 			meta: { title: '登录' },
 			component: () => import('../components/Login')
-		},
-		{
+		},{
 			path: '/register',
 			name: 'register',
 			meta: { title: '注册' },
 			component: () => import('../components/Register')
-		},
-		{
+		},{
+			path: '/forget',
+			name: 'forget',
+			meta: { title: '忘记密码' },
+			component: () => import('../components/Forget')
+		},{
 			path: '',
 			component: Layout,
 			children: [
@@ -113,14 +116,14 @@ router.beforeEach((to, from ,next) => {
 		localStorage.setItem('recommender', to.query.recommender)
 	}
 	if (localStorage.getItem('token') && localStorage.getItem('token') != 'undefined') {
-        if (to.path === '/login' || to.path === '/register') {
+        if (to.path === '/login' || to.path === '/register' || to.path === '/forget') {
             next({ path: '/' })
         } else {
             next()
         }
     } else {
         /* has no token*/
-		if (to.path === '/login' || to.path === '/register') {
+		if (to.path === '/login' || to.path === '/register' || to.path === '/forget') {
             next()
         } else {
             next('/login')

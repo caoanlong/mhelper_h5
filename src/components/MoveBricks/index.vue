@@ -1,6 +1,6 @@
 <template>
 	<div class="home-container">
-		<div class="refresh" @click="refresh">
+		<div class="refresh" @click="refreshCon" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
 		<mt-header fixed :title="$route.meta.title">
@@ -8,13 +8,7 @@
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
 		</mt-header>
-		<ly-tab 
-			style="top:40px"
-			class="navbar"
-			:items="tabs"
-			:options="options" 
-			@change="changeTab">
-		</ly-tab>
+		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 		<div>
 			<coin-item-mutiple v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item-mutiple>
 		</div>
@@ -23,6 +17,7 @@
 
 <script>
 import { Indicator, Toast } from 'mint-ui'
+import Tabs from '../Common/Tabs'
 import moment from 'moment'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
@@ -30,11 +25,14 @@ import CoinItemMutiple from './components/CoinItemMutiple'
 import { SORTS } from '../../utils/consts'
 export default {
 	name: "Home",
-	components: { CoinItemMutiple },
+	components: { CoinItemMutiple, Tabs },
 	data() {
 		return {
-			selectedId: '',
+			wait: 10,
+			canRefresh: true,
+			selectedId: 1,
 			tabs: [],
+			oTabs: [],
 			options: {
 				activeColor: '#26a2ff',
 				labelKey: 'name'
@@ -46,11 +44,16 @@ export default {
 		this.getCoinList()
 	},
 	methods: {
-		changeTab(item, index) {
-			if (this.selectedId != item.id) {
-				this.selectedId = item.id
+		changeTab(id) {
+			if (this.selectedId != id) {
+				this.selectedId = id
 				this.refresh()
 			}
+		},
+		refreshCon() {
+			if (!this.canRefresh) return
+			this.timeGo()
+			this.refresh()
 		},
 		async refresh() {
 			Indicator.open()
@@ -70,15 +73,17 @@ export default {
 						item.eunex = eunexList[y]
 					}
 				}
-				if (item.mbaex || item.eunex) sortData.push(item)
+				if (item.mbaex && item.eunex) sortData.push(item)
 			}
 			this.list = sortData
 			Indicator.close()
 		},
 		getCoinList() {
 			Coin.find().then(res => {
-				this.tabs = res
-				this.selectedId = res[0].id
+				this.oTabs = res
+				const tabs = ['USDT', 'BTC']
+				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				this.selectedId = 1
 				this.refresh()
 			})
 		},
@@ -87,6 +92,22 @@ export default {
 				coinId: this.selectedId,
 				platform
 			})
+		},
+		/**
+		 * 	倒计时
+		 */
+		timeGo() {
+			if (this.wait == 0) {
+				this.canRefresh = true
+				this.wait = 10
+				return
+			} else {
+				this.canRefresh = false
+				this.wait--
+				setTimeout(() => {
+					this.timeGo()
+				}, 1000)
+			}
 		},
 		back() {
 			this.$router.go(-1)
@@ -127,6 +148,7 @@ export default {
 		font-size 18px
 		border-radius 100%
 		background-color #26a2ff
+		opacity 0.7
 		box-shadow 0 2px 4px rgba(0,0,0,.4)
 	.logo
 		display flex
@@ -142,6 +164,7 @@ export default {
 	.navbar
 		position fixed
 		left 0
+		top 40px
 		width 100%
 		z-index 9999
 </style>

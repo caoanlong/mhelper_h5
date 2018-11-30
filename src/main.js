@@ -10,7 +10,6 @@ import 'vue-easytable/libs/themes-base/index.css'
 // 导入 table 和 分页组件
 import { VTable, VPagination } from 'vue-easytable'
 
-import LyTab from 'ly-tab'
 import Croppa from 'vue-croppa'
 
 import App from './App'
@@ -26,7 +25,6 @@ import './utils/numberFixed'
 Vue.config.productionTip = false
 
 Vue.use(MintUI)
-Vue.use(LyTab)
 Vue.use(Croppa)
 
 // 注册到全局

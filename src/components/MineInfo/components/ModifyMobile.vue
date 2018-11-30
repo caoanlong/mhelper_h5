@@ -27,7 +27,7 @@ export default {
             cellphone: '',
             icode: '',
             captcha: '',
-            wait: 60,
+            wait: 180,
 			isGetVCode: false,
 			getVcodeText: '获取验证码'
         }
@@ -79,7 +79,7 @@ export default {
 			if (this.wait == 0) {
 				this.getVcodeText = '重新获取'
 				this.isGetVCode = false
-				this.wait = 30
+				this.wait = 180
 				return
 			} else {
 				this.isGetVCode = true

@@ -1,6 +1,6 @@
 <template>
 	<div class="home-container">
-		<div class="refresh" @click="refresh">
+		<div class="refresh" @click="refreshCon" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
 		<mt-header fixed :title="$route.meta.title">
@@ -26,13 +26,7 @@
 				@click="changePlatform('eunex')">
 			</div>
 		</div>
-		<ly-tab 
-			style="top:80px"
-			class="navbar"
-			:items="tabs"
-			:options="options" 
-			@change="changeTab">
-		</ly-tab>
+		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 		<div>
 			<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 		</div>
@@ -42,15 +36,19 @@
 
 <script>
 import { Indicator, Toast } from 'mint-ui'
+import CoinItem from './components/CoinItem'
+import Tabs from '../Common/Tabs'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
-import CoinItem from './components/CoinItem'
 import { SORTS } from '../../utils/consts'
+import { getUrlBase64 } from '../../utils/common'
 export default {
 	name: "Home",
-	components: { CoinItem },
+	components: { CoinItem, Tabs },
 	data() {
 		return {
+			wait: 10,
+			canRefresh: true,
 			sheetVisible: false,
 			actions: [
 				{ 
@@ -71,12 +69,9 @@ export default {
 						this.notice()
 					}
 				}],
-			selectedId: '',
+			selectedId: 1,
+			oTabs: [],
 			tabs: [],
-			options: {
-				activeColor: '#26a2ff',
-				labelKey: 'name'
-			},
 			platform: 'mbaex',
 			list: []
 		}
@@ -87,16 +82,36 @@ export default {
 	methods: {
 		changePlatform(platform) {
 			this.platform = platform
+			if (this.platform == 'mbaex') {
+				const tabs = ['USDT', 'BTC', 'MDP']
+				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+			} else if (this.platform == 'eunex') {
+				const tabs = ['USDT', 'BTC', 'ETH']
+				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				this.tabs[0] = {
+					id: 1,
+					coinId: 1,
+					name: 'USDTK',
+					code: 'USDTK',
+					coinName: 'USDTK'
+				}
+			}
+			this.selectedId = 1
 			this.refresh()
 		},
-		changeTab(item, index) {
-			if (this.selectedId != item.id) {
-				this.selectedId = item.id
+		changeTab(id) {
+			if (this.selectedId != id) {
+				this.selectedId = id
 				this.refresh()
 			}
 		},
 		notice() {
 			Toast('暂未开放！')
+		},
+		refreshCon() {
+			if (!this.canRefresh) return
+			this.timeGo()
+			this.refresh()
 		},
 		async refresh() {
 			Indicator.open()
@@ -115,8 +130,22 @@ export default {
 		},
 		getCoinList() {
 			Coin.find().then(res => {
-				this.tabs = res
-				this.selectedId = res[0].id
+				this.oTabs = res
+				if (this.platform == 'mbaex') {
+					const tabs = ['USDT', 'BTC', 'MDP']
+					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				} else if (this.platform == 'eunex') {
+					const tabs = ['USDT', 'BTC', 'ETH']
+					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+					this.tabs[0] = {
+						id: 1,
+						coinId: 1,
+						name: 'USDTK',
+						code: 'USDTK',
+						coinName: 'USDTK'
+					}
+				}
+				this.selectedId = 1
 				this.refresh()
 			})
 		},
@@ -125,6 +154,22 @@ export default {
 				coinId: this.selectedId,
 				platform: this.platform
 			})
+		},
+		/**
+		 * 	倒计时
+		 */
+		timeGo() {
+			if (this.wait == 0) {
+				this.canRefresh = true
+				this.wait = 10
+				return
+			} else {
+				this.canRefresh = false
+				this.wait--
+				setTimeout(() => {
+					this.timeGo()
+				}, 1000)
+			}
 		}
 	}
 }
@@ -162,6 +207,7 @@ export default {
 		font-size 18px
 		border-radius 100%
 		background-color #26a2ff
+		opacity 0.7
 		box-shadow 0 2px 4px rgba(0,0,0,.4)
 	.platform-tab
 		position fixed
@@ -215,6 +261,7 @@ export default {
 		left 0
 		width 100%
 		z-index 999
+		top 80px
 	.logo
 		display flex
 		align-items center

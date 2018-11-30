@@ -11,6 +11,7 @@
                 placeholder="请选择图片" 
                 :canvas-color="'#333333'" 
                 :placeholder-font-size="16" 
+                :placeholder-color="'#ffffff'"
                 :prevent-white-space="true" 
                 :zoom-speed="8"
                 accept="image/*"

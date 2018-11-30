@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="item two">
+        <div class="item two" :class="marketCoin.change > 0 ? 'green' : 'red'">
             <div class="up">{{marketCoin.price}}</div>
             <div class="down">￥{{(marketCoin.price).mul(7)}}</div>
         </div>
@@ -89,18 +89,21 @@ export default {
                 text-align right
                 margin-left 5px
     .two
-        flex 0 0 90px
-        text-align right
-        padding 0 10px
+        flex 0 0 100px
+        padding 0 30px 0 0
+        &.red
+            color #d9534f
+        &.green
+            color #5cb85c
         .up
             height 30px
             line-height 30px
             font-size 16px
             font-weight 600
-            color #333333
+            // color #333333
         .down
             font-size 12px
-            color #999999
+            // color #999999
     .three
         flex 0 0 70px
         display flex

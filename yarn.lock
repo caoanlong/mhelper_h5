@@ -5887,6 +5887,13 @@ vue-router@^3.0.1:
   version "3.0.1"
   resolved "http://registry.npm.taobao.org/vue-router/download/vue-router-3.0.1.tgz#d9b05ad9c7420ba0f626d6500d693e60092cc1e9"
 
+vue-slide-tabs@^1.0.0, vue-slide-tabs@^1.1.0:
+  version "1.1.0"
+  resolved "http://registry.npm.taobao.org/vue-slide-tabs/download/vue-slide-tabs-1.1.0.tgz#3a2f2d1b496b0c855c3090c2fbc74e544b10c49a"
+  dependencies:
+    vue "^2.5.11"
+    vue-slide-tabs "^1.0.0"
+
 vue-style-loader@^3.0.0, vue-style-loader@^3.0.1:
   version "3.1.2"
   resolved "http://registry.npm.taobao.org/vue-style-loader/download/vue-style-loader-3.1.2.tgz#6b66ad34998fc9520c2f1e4d5fa4091641c1597a"
@@ -5905,7 +5912,7 @@ vue-template-es2015-compiler@^1.2.2, vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "http://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
-vue@^2.2.6, vue@^2.5.2:
+vue@^2.2.6, vue@^2.5.11, vue@^2.5.2:
   version "2.5.17"
   resolved "http://registry.npm.taobao.org/vue/download/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
 
