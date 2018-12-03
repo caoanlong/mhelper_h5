@@ -12,6 +12,15 @@ class Customer extends Base {
             }).catch(err => reject(err))
         })
     }
+    modifyPassword(params) {
+        if (!this.isClick) return Promise.reject('重复提交！')
+        this.isClick = false
+        setTimeout(() => { this.isClick = true }, this.delay)
+        return this.request({
+            url: this.baseUrl + '/update/password',
+            params
+        })
+    }
     spread(params) {
         return new Promise((resolve, reject) => {
             this.request({

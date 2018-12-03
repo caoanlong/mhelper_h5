@@ -5,11 +5,11 @@
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
 		</mt-header>
-        <mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="member.cellPhone"></mt-field>
+        <mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="member.cellphone"></mt-field>
         <mt-field label="短信验证码" placeholder="请输入短信验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.iCode">
             <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
-        <mt-field label="新密码" placeholder="请输入新密码" :type="isShow ? '' : 'password'" v-model="member.password">
+        <mt-field label="新密码" placeholder="请输入新密码" :type="isShow ? '' : 'password'" v-model="member.newpassword">
             <div style="width:30px;color:#999;text-align:right" @click="isShow = !isShow">
                 <svg-icon :icon-class="isShow ? 'eye-open' : 'eye'"></svg-icon>
             </div>
@@ -31,9 +31,9 @@ export default {
         return {
             isShow: false,
             member: {
-                cellPhone: '',
+                cellphone: '',
                 iCode: '',
-                password: ''
+                newpassword: ''
             },
             wait: 180,
 			isGetVCode: false,
@@ -48,20 +48,21 @@ export default {
     methods: {
         getVcode() {
             if (this.isGetVCode) return
-            if (!this.member.cellPhone) {
+            if (!this.member.cellphone) {
                 Toast('请输入手机号')
                 return
             }
             this.timeGo()
             Login.getICode({
-                cellphone: this.member.cellPhone
+                cellphone: this.member.cellphone,
+                type: 2
             }).then(res => {
                 // Toast('验证码：' + res)
             })
             
         },
         forget() {
-            if (!this.member.cellPhone) {
+            if (!this.member.cellphone) {
                 Toast('请输入手机号')
                 return
             }
@@ -69,13 +70,10 @@ export default {
                 Toast('请输入验证码')
                 return
             }
-            // Login.registry(this.member).then(res => {
-            //     Toast(res.data.msg)
-            //     localStorage.setItem('token', res.headers['authorization'])
-            //     this.$store.dispatch('getUserInfo').then(() => {
-            //         this.$router.push({name: 'home'})
-            //     })
-            // })
+            Login.forget(this.member).then(res => {
+                Toast('成功')
+                this.$router.push({name: 'home'})
+            })
         },
         /**
 		 * 	倒计时

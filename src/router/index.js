@@ -70,6 +70,11 @@ const router = new Router({
 					name: 'modifymobile',
 					meta: { title: '修改手机号' },
 					component: () => import('../components/MineInfo/components/ModifyMobile')
+				}, {
+					path: '/modifypasswosrd',
+					name: 'modifypassword',
+					meta: { title: '修改密码' },
+					component: () => import('../components/MineInfo/components/ModifyPassword')
 				},{
 					path: '/avatar',
 					name: 'avatar',

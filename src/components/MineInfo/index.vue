@@ -18,6 +18,9 @@
 		<mt-cell title="手机号" :value="user.cellphone" :to="{
 			name: 'modifymobile', query: {value: user.cellphone}
 			}" is-link></mt-cell>
+		<mt-cell title="修改密码" :to="{
+			name: 'modifypassword', query: {value: user.cellphone}
+			}" is-link></mt-cell>
 		<div class="logout">
 			<mt-button type="danger" style="width:100%" @click="loginOut">退出</mt-button>
 		</div>

@@ -62,7 +62,8 @@ export default {
             }
             this.timeGo()
             Login.getICode({
-                cellphone: this.member.cellPhone
+                cellphone: this.member.cellPhone,
+                type: 1
             }).then(res => {
                 // Toast('验证码：' + res)
             })
