@@ -12,7 +12,7 @@
         <mt-field label="短信验证码" placeholder="请输入短信验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.iCode">
             <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
-        <mt-field label="邀请码" type="number" :value="recommender" v-if="recommender" disabled></mt-field>
+        <mt-field label="邀请码" type="number" v-model="recommender" :disabled="isRecommender"></mt-field>
         <div class="login">
 			<mt-button type="danger" style="width:100%" @click="register">注册</mt-button>
 		</div>
@@ -39,7 +39,8 @@ export default {
             wait: 180,
 			isGetVCode: false,
 			getVcodeText: '获取验证码',
-            recommender: ''
+            recommender: '',
+            isRecommender: false
         }
     },
     computed: {
@@ -47,7 +48,10 @@ export default {
     },
     created() {
         const recommender = localStorage.getItem('recommender')
-        if (recommender) this.recommender = recommender
+        if (recommender) {
+            this.isRecommender = true
+            this.recommender = recommender
+        }
     },
     methods: {
         refreshCaptcha() {
@@ -60,12 +64,12 @@ export default {
                 Toast('请输入手机号')
                 return
             }
-            this.timeGo()
             Login.getICode({
                 cellphone: this.member.cellPhone,
                 type: 1
             }).then(res => {
                 // Toast('验证码：' + res)
+                this.timeGo()
             })
             
         },
@@ -113,7 +117,7 @@ export default {
 			}
 		},
 		back() {
-			this.$router.go(-1)
+			this.$router.push({name: 'login'})
 		}
 	}
 }

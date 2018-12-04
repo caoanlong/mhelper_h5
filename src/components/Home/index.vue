@@ -8,7 +8,7 @@
                 <svg-icon icon-class="notice"></svg-icon>
 				<span>行情提醒</span>
             </div>
-			<mt-button icon="more" slot="right" @click="sheetVisible = true"></mt-button>
+			<div slot="right" @click="sheetVisible = true">更多...</div>
 		</mt-header>
 		<mt-actionsheet
 			:actions="actions"

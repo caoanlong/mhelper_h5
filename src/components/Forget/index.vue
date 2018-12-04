@@ -44,6 +44,7 @@ export default {
         baseURL: () => baseURL
     },
     created() {
+        this.member.cellphone = this.$route.query.cellphone || ''
     },
     methods: {
         getVcode() {
@@ -52,12 +53,12 @@ export default {
                 Toast('请输入手机号')
                 return
             }
-            this.timeGo()
             Login.getICode({
                 cellphone: this.member.cellphone,
                 type: 2
             }).then(res => {
                 // Toast('验证码：' + res)
+                this.timeGo()
             })
             
         },
@@ -94,7 +95,7 @@ export default {
 			}
 		},
 		back() {
-			this.$router.go(-1)
+			this.$router.push({name: 'login'})
 		}
 	}
 }

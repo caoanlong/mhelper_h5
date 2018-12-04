@@ -47,10 +47,10 @@
         <div class="item three">
             <div class="diff-price-title" v-if="marketCoin.mbaex && marketCoin.eunex">差价</div>
             <div class="diff-price-txt" v-if="marketCoin.mbaex && marketCoin.eunex">
-                {{(marketCoin.mbaex.price - marketCoin.eunex.price).toFixed(2)}}
+                {{Math.abs(marketCoin.mbaex.price - marketCoin.eunex.price).toFixed(2)}}
             </div>
             <div class="diff-price-per" :class="{'big-range': (marketCoin.mbaex.price - marketCoin.eunex.price)/marketCoin.mbaex.price > 10}" v-if="marketCoin.mbaex && marketCoin.eunex">
-                {{((marketCoin.mbaex.price - marketCoin.eunex.price)/marketCoin.mbaex.price).toFixed(2)}}%
+                {{(Math.abs(marketCoin.mbaex.price - marketCoin.eunex.price)/marketCoin.mbaex.price * 100).toFixed(2)}}%
             </div>
         </div>
     </div>

@@ -8,8 +8,8 @@
             </div>
         </mt-field>
         <div class="btns">
-            <router-link tag="div" class="register" to="/register">注册</router-link>
-            <router-link tag="div" class="forget" to="/forget">忘记密码</router-link>
+            <router-link tag="div" class="register" to="/register">注册新帐号</router-link>
+            <router-link tag="div" class="forget" :to="{name: 'forget', query: {cellphone: member.loginaccount}}">忘记密码</router-link>
         </div>
         <div class="login">
 			<mt-button type="primary" style="width:100%" @click="login">登录</mt-button>
@@ -62,10 +62,11 @@ export default {
     .btns
         display flex
         padding 10px
-        color #26a2ff
         .register
             flex 1
+            color #ef4f4f
         .forget
+            color #26a2ff
             flex 1
             text-align right
     .login
