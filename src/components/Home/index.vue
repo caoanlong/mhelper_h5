@@ -1,34 +1,36 @@
 <template>
-	<div class="home-container">
+	<div class="home-container" id="container">
 		<div class="refresh" @click="refreshCon" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
-		<mt-header fixed :title="$route.meta.title">
-			<div slot="left" @click="notice">
-                <svg-icon icon-class="notice"></svg-icon>
-				<span>行情提醒</span>
-            </div>
-			<div slot="right" @click="sheetVisible = true">更多...</div>
-		</mt-header>
-		<mt-actionsheet
+		<mt-actionsheet 
 			:actions="actions"
 			v-model="sheetVisible">
 		</mt-actionsheet>
-		<div class="platform-tab">
-			<div 
-				class="platform-item mbaex-logo" 
-				:class="{'select-platform': platform == 'mbaex'}" 
-				@click="changePlatform('mbaex')">
+		<div id="contain">
+			<mt-header fixed :title="$route.meta.title">
+				<div slot="left" @click="notice">
+					<svg-icon icon-class="notice"></svg-icon>
+					<span>行情提醒</span>
+				</div>
+				<div slot="right" @click="sheetVisible = true">更多...</div>
+			</mt-header>
+			<div class="platform-tab">
+				<div 
+					class="platform-item mbaex-logo" 
+					:class="{'select-platform': platform == 'mbaex'}" 
+					@click="changePlatform('mbaex')">
+				</div>
+				<div 
+					class="platform-item eunex-logo" 
+					:class="{'select-platform': platform == 'eunex'}" 
+					@click="changePlatform('eunex')">
+				</div>
 			</div>
-			<div 
-				class="platform-item eunex-logo" 
-				:class="{'select-platform': platform == 'eunex'}" 
-				@click="changePlatform('eunex')">
+			<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<div id="coins">
+				<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 			</div>
-		</div>
-		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
-		<div>
-			<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 		</div>
 		<div style="height:90px"></div>
 	</div>
@@ -41,7 +43,7 @@ import Tabs from '../Common/Tabs'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
-import { getUrlBase64 } from '../../utils/common'
+import { saveHtml2Img } from '../../utils/common'
 export default {
 	name: "Home",
 	components: { CoinItem, Tabs },
@@ -64,9 +66,12 @@ export default {
 					}
 				}, 
 				{ 
-					name: '行情提醒',
+					name: '保存行情为图片',
 					method: () => {
-						this.notice()
+						const container = document.getElementById('container')
+						const contain = document.getElementById('contain')
+						container.scrollTop = 0
+						saveHtml2Img(contain)
 					}
 				}],
 			selectedId: 1,
@@ -78,6 +83,10 @@ export default {
 	},
 	created() {
 		this.getCoinList()
+	},
+	mounted() {
+		// const contain = document.getElementById('contain')
+		// contain.scrollTop = 0
 	},
 	methods: {
 		changePlatform(platform) {
@@ -192,8 +201,13 @@ export default {
 	left 0
 	right 0
 	bottom 0
-	padding-top 119px
-	padding-bottom 55px
+	#contain
+		position absolute
+		top 0
+		left 0
+		right 0
+		padding-top 119px
+		padding-bottom 55px
 	.refresh
 		position fixed
 		z-index 999

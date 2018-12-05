@@ -1,3 +1,7 @@
+import html2canvas from 'html2canvas'
+import moment from 'moment'
+import { Toast } from 'mint-ui'
+
 // 获取地址栏参数
 export const getQueryString = function (name) {
     const reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)")
@@ -65,6 +69,32 @@ export const getUrlBase64 = function(url, callback) {
         callback.call(this, dataURL); //回掉函数获取Base64编码
         canvas = null;
     };
+}
+
+/**
+ * 保存html到图片
+ * @param {*} json 
+ */
+export const saveHtml2Img = function(tag) {
+    html2canvas(tag, {
+        useCORS: true
+    }).then((canvas) => {
+        // 生成base64图片数据
+        const imgData = canvas.toDataURL('image/png')
+        // 获取生成的图片的url
+        const imgUri = imgData.replace('image/png', 'image/octet-stream')
+        // 下载图片
+        const filename = 'mhelper-' + moment().format('YYYYMMDDhhmmss') + '.png'
+        // const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+        const save_link = document.createElement('a')
+        save_link.href = imgUri
+        save_link.download = filename
+
+        const event = document.createEvent('MouseEvents')
+        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+        save_link.dispatchEvent(event)
+        Toast('保存成功！')
+    })
 }
 
 /**author:Caoanlong *day:2017-08-24
