@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>MHelper</title>
-    <script src='https://res.wx.qq.com/open/js/jweixin-1.4.0.js'></script>
-    <script>
-      window.onload = function () {
-        if (location.hash.indexOf('recommender') > -1) {
-          localStorage.setItem('recommender', location.hash.split('recommender=')[1])
-        }
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>MHelper</title>
+  <script src='https://res.wx.qq.com/open/js/jweixin-1.4.0.js'></script>
+  <script>
+    window.onload = function () {
+      if (location.hash.indexOf('recommender') > -1) {
+        localStorage.setItem('recommender', location.hash.split('recommender=')[1])
       }
-    </script>
-  </head>
-  <body>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+    }
+
+  </script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>

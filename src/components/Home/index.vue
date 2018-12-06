@@ -31,6 +31,17 @@
 			<div id="coins">
 				<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 			</div>
+			<div class="about-info">
+				<p class="info-txt">实时掌握行情变化  把握每次赚钱机会</p>
+				<div class="features">
+					<router-link tag="div" class="feature" to="attentionpublic">关注公众号</router-link>
+					<div class="feature">获取小程序</div>
+					<div class="feature">意见反馈</div>
+					<router-link tag="div" class="feature" to="contactcustomerservice">联系客服</router-link>
+				</div>
+				<router-link tag="div" class="about" to="about">M圈专业的技术团队，旨为M粉量身高</router-link>
+				<p class="info-txt-b">©2018-2028 MHelper, Inc. All rights reserved</p>
+			</div>
 		</div>
 		<div style="height:90px"></div>
 	</div>
@@ -44,6 +55,7 @@ import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
 import { saveHtml2Img } from '../../utils/common'
+import { setInterval } from 'timers';
 export default {
 	name: "Home",
 	components: { CoinItem, Tabs },
@@ -78,11 +90,18 @@ export default {
 			oTabs: [],
 			tabs: [],
 			platform: 'mbaex',
-			list: []
+			list: [],
+			timer: null
 		}
 	},
 	created() {
 		this.getCoinList()
+		this.timer = setInterval(() => {
+			this.autoRefresh()
+		}, 30000)
+	},
+	destroyed() {
+		this.timer = null
 	},
 	mounted() {
 		// const contain = document.getElementById('contain')
@@ -136,6 +155,18 @@ export default {
 			}
 			this.list = sortData
 			Indicator.close()
+		},
+		async autoRefresh() {
+			const list = await this.getMarketList('mbaex')
+			const sortData = []
+			for (let i = 0; i < SORTS.length; i++) {
+				for (let x = 0; x < list.length; x++) {
+					if (list[x].name.split('/')[0].includes(SORTS[i])) {
+						sortData.push(list[x])
+					}
+				}
+			}
+			this.list = sortData
 		},
 		getCoinList() {
 			Coin.find().then(res => {
@@ -208,6 +239,31 @@ export default {
 		right 0
 		padding-top 119px
 		padding-bottom 55px
+	.about-info
+		padding 20px 10px 50px 10px
+		background-color #f2f2f2
+		font-size 14px
+		.info-txt
+			color #666
+			font-size 16px
+			text-align center
+		.info-txt-b
+			color #999
+			text-align center
+			font-size 13px
+			line-height 2
+		.features
+			display flex
+			height 30px
+			line-height 30px
+			.feature
+				flex 1
+				color #26a2ff
+				text-align center
+		.about
+			color #26a2ff
+			line-height 2
+			text-align center
 	.refresh
 		position fixed
 		z-index 999

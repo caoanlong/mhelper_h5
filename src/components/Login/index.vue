@@ -8,7 +8,7 @@
             </div>
         </mt-field>
         <div class="btns">
-            <router-link tag="div" class="register" to="/register">注册新帐号</router-link>
+            <router-link tag="div" class="register" :to="{name: 'forget', query: {cellphone: member.loginaccount}}">注册新帐号</router-link>
             <router-link tag="div" class="forget" :to="{name: 'forget', query: {cellphone: member.loginaccount}}">忘记密码</router-link>
         </div>
         <div class="login">

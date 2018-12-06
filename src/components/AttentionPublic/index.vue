@@ -1,0 +1,48 @@
+<template>
+    <div class="container">
+        <mt-header fixed :title="$route.meta.title">
+			<router-link to="" slot="left" @click.native="back">
+				<mt-button icon="back">返回</mt-button>
+			</router-link>
+		</mt-header>
+        <div class="wrapper">
+            <div class="title">为了能在行情变化时第一时间通知您，请关注公众号，不错过任何一次赚钱的机会。</div>
+            <div class="qrcode">
+                <img class="qrcode-img" src="../../assets/qrcode.jpg" alt="">
+                <p class="qrcode-txt">长按图片识别二维码，关注公众号</p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    methods: {
+        back() {
+			this.$router.go(-1)
+		}
+    }
+}
+</script>
+
+<style lang="stylus" scoped>
+.container
+    padding-top 40px
+    .wrapper
+        width 100%
+        padding 10px
+        .title
+            line-height 1.8
+            text-align center
+            font-weight bold
+        .qrcode
+            width 100%
+            padding 20px 0 50px 0
+            .qrcode-img
+                display block
+                width 200px
+                height 200px
+                margin 0 auto
+            .qrcode-txt
+                text-align center
+</style>

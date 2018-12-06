@@ -110,6 +110,21 @@ const router = new Router({
 					name: 'bankcard',
 					meta: { title: '银行卡' },
 					component: () => import('../components/BankCard')
+				},{
+					path: '/about',
+					name: 'about',
+					meta: { title: '关于' },
+					component: () => import('../components/About')
+				},{
+					path: '/attentionpublic',
+					name: 'attentionpublic',
+					meta: { title: '关注公众号' },
+					component: () => import('../components/AttentionPublic')
+				},{
+					path: '/contactcustomerservice',
+					name: 'contactcustomerservice',
+					meta: { title: '联系客服' },
+					component: () => import('../components/ContactCustomerService')
 				}
 			]
 		}

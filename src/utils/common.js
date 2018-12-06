@@ -76,6 +76,8 @@ export const getUrlBase64 = function(url, callback) {
  * @param {*} json 
  */
 export const saveHtml2Img = function(tag) {
+    shareShow()
+    return
     html2canvas(tag, {
         useCORS: true
     }).then((canvas) => {
@@ -85,14 +87,14 @@ export const saveHtml2Img = function(tag) {
         const imgUri = imgData.replace('image/png', 'image/octet-stream')
         // 下载图片
         const filename = 'mhelper-' + moment().format('YYYYMMDDhhmmss') + '.png'
-        // const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
-        const save_link = document.createElement('a')
-        save_link.href = imgUri
-        save_link.download = filename
+
+        const a = document.createElement('a')
+        a.href = imgUri
+        a.download = filename
 
         const event = document.createEvent('MouseEvents')
-        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-        save_link.dispatchEvent(event)
+        event.initMouseEvent('click', true, true)
+        a.dispatchEvent(event)
         Toast('保存成功！')
     })
 }
@@ -107,4 +109,92 @@ export const formDataReq = function(json) {
         formData.append(attr, json[attr])
     };
     return formData
+}
+
+
+/**
+   * 分享操作
+   * @param {JSON} sb 分享操作对象s.s为分享通道对象(plus.share.ShareService)
+   * @param {Boolean} bh 是否分享链接
+   */
+  function shareAction(sb,bh) {
+	console.log('heiheihei')
+	var msg={content:"你好啊",extra:{},"pictures":["_www/logo.png"]};
+	// 发送分享
+	if(sb.s.authenticated){
+		console.log('---已授权---');
+		shareMessage(msg, sb.s);
+	}else{
+		console.log('---未授权---');
+		sb.s.authorize(function(){
+//			shareMessage(msg,sb.s);
+		}, function(e){
+			console.log('认证授权失败：'+e.code+' - '+e.message);
+		});
+	}
+}
+/**
+   * 发送分享消息
+   * @param {JSON} msg
+   * @param {plus.share.ShareService} s
+   */
+function shareMessage(msg, s){
+	console.log(JSON.stringify(msg));
+	s.send(msg, function(){
+		console.log('分享到"'+s.description+'"成功！');
+	}, function(e){console.log('分享到"'+s.description+'"失败: '+JSON.stringify(e));
+	});
+}
+// 使用Logo图片分享
+function shareLogoPicture(){
+	console.log('使用Logo分享图片：');
+	var url='_www/logo.png';
+	plus.io.resolveLocalFileSystemURL(url, function(entry){
+		pic.src=entry.toLocalURL();
+		pic.realUrl=url;
+	}, function(e){
+		console.log('读取Logo文件错误：'+e.message);
+	});
+}
+// 打开分享
+function shareShow(){
+    var shares = null;
+    // H5 plus事件处理
+    function plusReady() {
+      updateSerivces();
+    }
+    if (window.plus) {
+      plusReady();
+    } else {
+      document.addEventListener('plusready', plusReady, false);
+    }
+    /**
+     * 更新分享服务
+     */
+    function updateSerivces() {
+      plus.share.getServices(function (s) {
+        shares = {};
+        for (var i in s) {
+          var t = s[i];
+          shares[t.id] = t;
+        }
+      }, function (e) {
+        console.log('获取分享服务列表失败：' + e.message);
+      });
+	}
+	console.log("asdgjkhg");
+	var shareBts=[];
+	// 更新分享列表
+	var ss=shares['weixin'];
+	if(navigator.userAgent.indexOf('qihoo')<0){  //在360流应用中微信不支持分享图片
+		ss&&ss.nativeClient&&(shareBts.push({title:'微信朋友圈',s:ss,x:'WXSceneTimeline'}),
+		shareBts.push({title:'微信好友',s:ss,x:'WXSceneSession'}));
+	}
+	ss=shares['qq'];
+	ss&&ss.nativeClient&&shareBts.push({title:'QQ',s:ss});
+//	shareAction(shareBts[e.index-1],false);
+	plus.nativeUI.actionSheet({title:'分享',cancel:'取消',buttons:shareBts}, function(e){
+		
+		(e.index>0)&&shareAction(shareBts[e.index-1],false);
+    });
 }

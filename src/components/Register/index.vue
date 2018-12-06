@@ -52,6 +52,7 @@ export default {
             this.isRecommender = true
             this.recommender = recommender
         }
+        this.member.cellPhone = this.$route.query.cellphone || ''
     },
     methods: {
         refreshCaptcha() {

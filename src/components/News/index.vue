@@ -2,12 +2,16 @@
 	<div class="news-container">
 		<mt-header fixed :title="$route.meta.title"></mt-header>
 		<div class="article_list">
-			<router-link tag="div" class="list_item" v-for="(item, i) in news" :key="i" :to="{name: 'newsdetail', query: {newsId: item.newsId}}">
+			<a 
+				:href="item.href" 
+				class="list_item" 
+				v-for="(item, i) in news" 
+				:key="i">
 				<img class="cover" :src="item.thumbnail" alt="">
 				<div class="cont">
 					<h2 class="title">{{item.title}}</h2>
 				</div>
-			</router-link>
+			</a>
 		</div>
 	</div>
 </template>
@@ -42,6 +46,8 @@ export default {
 	.article_list
 		width 100%
 		.list_item
+			display block
+			text-decoration none
 			position relative
 			padding 12px 125px 11px 20px
 			background-color #ffffff

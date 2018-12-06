@@ -13,10 +13,12 @@
 		</router-link>
 		<mt-cell title="等级" value="普通会员" is-link @click.native="hope"></mt-cell>
 		<mt-cell title="业绩" to="performance" is-link></mt-cell>
-		<mt-cell title="贡献值" value="0" to="contribution" is-link></mt-cell>
+		<mt-cell title="贡献值" :value="user && user.last_num" to="contribution" is-link></mt-cell>
 		<mt-cell title="购买记录" is-link @click.native="hope"></mt-cell>
 		<mt-cell title="结算" is-link @click.native="hope"></mt-cell>
 		<mt-cell title="银行卡" is-link @click.native="hope"></mt-cell>
+		<mt-cell title="关于" is-link to="about"></mt-cell>
+		<mt-cell title="关注公众号获得行情通知" is-link to="attentionpublic"></mt-cell>
 	</div>
 </template>
 
