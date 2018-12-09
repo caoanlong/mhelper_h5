@@ -76,8 +76,6 @@ export const getUrlBase64 = function(url, callback) {
  * @param {*} json 
  */
 export const saveHtml2Img = function(tag) {
-    shareShow()
-    return
     html2canvas(tag, {
         useCORS: true
     }).then((canvas) => {
@@ -85,17 +83,18 @@ export const saveHtml2Img = function(tag) {
         const imgData = canvas.toDataURL('image/png')
         // 获取生成的图片的url
         const imgUri = imgData.replace('image/png', 'image/octet-stream')
-        // 下载图片
-        const filename = 'mhelper-' + moment().format('YYYYMMDDhhmmss') + '.png'
+        // // 下载图片
+        // const filename = 'mhelper-' + moment().format('YYYYMMDDhhmmss') + '.png'
 
-        const a = document.createElement('a')
-        a.href = imgUri
-        a.download = filename
+        // const a = document.createElement('a')
+        // a.href = imgUri
+        // a.download = filename
 
-        const event = document.createEvent('MouseEvents')
-        event.initMouseEvent('click', true, true)
-        a.dispatchEvent(event)
-        Toast('保存成功！')
+        // const event = document.createEvent('MouseEvents')
+        // event.initMouseEvent('click', true, true)
+        // a.dispatchEvent(event)
+        // Toast('保存成功！')
+        return imgUri
     })
 }
 

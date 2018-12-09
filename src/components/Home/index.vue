@@ -31,7 +31,7 @@
 			<div id="coins">
 				<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 			</div>
-			<div class="about-info">
+			<div class="about-info" id="about">
 				<p class="info-txt">实时掌握行情变化  把握每次赚钱机会</p>
 				<div class="features">
 					<router-link tag="div" class="feature" to="attentionpublic">关注公众号</router-link>
@@ -42,15 +42,30 @@
 				<router-link tag="div" class="about" to="about">M圈专业的技术团队，旨为M粉量身高</router-link>
 				<p class="info-txt-b">©2018-2028 MHelper, Inc. All rights reserved</p>
 			</div>
+			<div class="qrcode-info" v-show="!!qrcodeImg">
+				<div class="qrcode-txt">识别二维码，了解更多行情</div>
+				<div class="qrcode-img">
+					<img id="qrcode-img" :src="qrcodeImg" alt="" />
+				</div>
+			</div>
 		</div>
-		<div style="height:90px"></div>
+		<div style="height:90px" id="block"></div>
+		<mt-popup v-model="popupVisible">
+            <div class="download-div">
+                <img class="download-img" :src="imgUri" alt="">
+                <p class="download-txt">长按图片保存</p>
+            </div>
+        </mt-popup>
 	</div>
 </template>
 
 <script>
 import { Indicator, Toast } from 'mint-ui'
+import html2canvas from 'html2canvas'
+import QRCode from 'qrcode'
 import CoinItem from './components/CoinItem'
 import Tabs from '../Common/Tabs'
+import { Popup } from 'mint-ui'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
@@ -58,9 +73,12 @@ import { saveHtml2Img } from '../../utils/common'
 import { setInterval } from 'timers';
 export default {
 	name: "Home",
-	components: { CoinItem, Tabs },
+	components: { CoinItem, Tabs, Popup },
 	data() {
 		return {
+			popupVisible: false,
+			qrcodeImg: '',
+			imgUri: '',
 			wait: 10,
 			canRefresh: true,
 			sheetVisible: false,
@@ -80,10 +98,39 @@ export default {
 				{ 
 					name: '保存行情为图片',
 					method: () => {
-						const container = document.getElementById('container')
-						const contain = document.getElementById('contain')
-						container.scrollTop = 0
-						saveHtml2Img(contain)
+						const opts = {
+							errorCorrectionLevel: 'H',
+							type: 'image/jpeg',
+							rendererOpts: {
+								quality: 0.3
+							}
+						}
+						const userInfo = localStorage.getItem('userInfo')
+						let link = ''
+						if (userInfo) {
+							const user = JSON.parse(userInfo)
+							link = `https://m.mhelper.co/#/?recommender=${user.userid}`
+						}
+						QRCode.toDataURL(link, opts, (err, url) => {
+							if (err) throw err
+							console.log(url)
+							this.qrcodeImg = url
+
+							this.$nextTick(() => {
+								const contain = document.getElementById('contain')
+								const about = document.getElementById('about')
+								contain.removeChild(about)
+								html2canvas(contain, {
+									useCORS: true
+								}).then((canvas) => {
+									// 生成base64图片数据
+									const imgData = canvas.toDataURL('image/png')
+									// 获取生成的图片的url
+									this.imgUri = imgData.replace('image/png', 'image/octet-stream')
+									this.popupVisible = true
+								})
+							})
+						})
 					}
 				}],
 			selectedId: 1,
@@ -239,8 +286,17 @@ export default {
 		right 0
 		padding-top 119px
 		padding-bottom 55px
+	.download-div
+		max-width 300px
+		.download-img
+			max-width 300px
+			height 600px
+		.download-txt
+			text-align center
+			height 50px
+			line-height 50px
 	.about-info
-		padding 20px 10px 50px 10px
+		padding 20px 10px
 		background-color #f2f2f2
 		font-size 14px
 		.info-txt
@@ -264,6 +320,19 @@ export default {
 			color #26a2ff
 			line-height 2
 			text-align center
+	.qrcode-info
+		display flex
+		height 90px
+		line-height 90px
+		.qrcode-txt
+			flex 1
+			padding-left 10px
+		.qrcode-img
+			flex 0 0 90px
+			#qrcode-img
+				margin-top 10px
+				width 70px
+				background-color #ccccccs
 	.refresh
 		position fixed
 		z-index 999
