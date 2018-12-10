@@ -2,24 +2,18 @@
     <div class="wrapper">
         <div class="item first">
             <div class="coin-icon">
-                <img v-lazy="marketCoin.mbaex ? marketCoin.mbaex.image : marketCoin.eunex.image" alt="">
+                <img v-lazy="marketCoin.mbaex.image" alt="">
             </div>
             <div class="coin-name">
-                {{marketCoin.mbaex ? marketCoin.mbaex.name.split('/')[0] : marketCoin.eunex.name.split('/')[0]}}
+                {{marketCoin.mbaex.name}}
             </div>
         </div>
-        <div class="item one" :style="{'padding-top': (marketCoin.mbaex && marketCoin.eunex) ? 0 : '15px'}">
+        <div class="item one" style="padding-top:0">
             <div class="up" v-if="marketCoin.mbaex">
                 <div class="coin-icon-mini"></div>
-                <div class="coin-volumn">
-                    {{
-                        marketCoin.mbaex.volume > 1000 
-                            ? (marketCoin.mbaex.volume/1000).toFixed(2) + '万' 
-                            : marketCoin.mbaex.volume.toFixed(2)
-                    }}
-                </div>
+                <div class="coin-volumn">{{marketCoin.mbaex.volume}}</div>
                 <div class="coin-price">{{marketCoin.mbaex.price}}</div>
-                <div class="coin-price-rmb">￥{{marketCoin.mbaex.price.mul(7)}}</div>
+                <div class="coin-price-rmb">￥{{marketCoin.mbaex.RMBprice}}</div>
                 <div class="coin-change">
                     <div class="change-tag" :class="marketCoin.mbaex.change > 0 ? 'rise' : 'fall'">
                         {{marketCoin.mbaex.change}}%
@@ -28,29 +22,21 @@
             </div>
             <div class="down" v-if="marketCoin.eunex">
                 <div class="coin-icon-mini"></div>
-                <div class="coin-volumn">
-                    {{
-                        marketCoin.eunex.volume > 1000 
-                            ? (marketCoin.eunex.volume/1000).toFixed(2) + '万' 
-                            : marketCoin.eunex.volume.toFixed(2)
-                    }}
-                </div>
+                <div class="coin-volumn">{{marketCoin.eunex.volume}}</div>
                 <div class="coin-price">{{marketCoin.eunex.price}}</div>
-                <div class="coin-price-rmb">￥{{marketCoin.eunex.price.mul(7)}}</div>
+                <div class="coin-price-rmb">￥{{marketCoin.eunex.RMBprice}}</div>
                 <div class="coin-change">
                     <div class="change-tag" :class="marketCoin.eunex.change > 0 ? 'rise' : 'fall'">
-                        {{(marketCoin.eunex.change * 100).toFixed(2)}}%
+                        {{marketCoin.eunex.change}}%
                     </div>
                 </div>
             </div>
         </div>
         <div class="item three">
-            <div class="diff-price-title" v-if="marketCoin.mbaex && marketCoin.eunex">差价</div>
-            <div class="diff-price-txt" v-if="marketCoin.mbaex && marketCoin.eunex">
-                {{Math.abs(marketCoin.mbaex.price - marketCoin.eunex.price).toFixed(2)}}
-            </div>
-            <div class="diff-price-per" :class="{'big-range': (marketCoin.mbaex.price - marketCoin.eunex.price)/marketCoin.mbaex.price > 10}" v-if="marketCoin.mbaex && marketCoin.eunex">
-                {{(Math.abs(marketCoin.mbaex.price - marketCoin.eunex.price)/marketCoin.mbaex.price * 100).toFixed(2)}}%
+            <div class="diff-price-title">差价</div>
+            <div class="diff-price-txt">{{marketCoin.spread}}</div>
+            <div class="diff-price-per" :class="{'big-range': marketCoin.spreadPercent > 10}">
+                {{marketCoin.spreadPercent.toFixed(2)}}%
             </div>
         </div>
     </div>
@@ -151,5 +137,6 @@ export default {
         .diff-price-per
             font-weight 500
         .big-range
-            color #26a2ff
+            color #d316b2
+            font-weight bold
 </style>

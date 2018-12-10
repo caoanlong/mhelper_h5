@@ -75,14 +75,51 @@ export default {
 				}
 				if (item.mbaex && item.eunex) sortData.push(item)
 			}
-			this.list = sortData
+			const list = sortData.map(item => {
+				return {
+					mbaex: {
+						image: item.mbaex.image,
+						name: item.mbaex.name.split('/')[0],
+						volume: item.mbaex.volume > 10000 
+                            ? (item.mbaex.volume/10000).toFixed(2) + '万' 
+                            : item.mbaex.volume.toFixed(2),
+						price: +item.mbaex.price,
+						RMBprice: item.mbaex.price.mul(7),
+						change: item.mbaex.change
+					}, 
+					eunex: {
+						image: item.eunex.image,
+						name: item.eunex.name.split('/')[0],
+						volume: item.eunex.volume > 10000 
+                            ? (item.eunex.volume/10000).toFixed(2) + '万' 
+                            : item.eunex.volume.toFixed(2),
+						price: +item.eunex.price,
+						RMBprice: item.eunex.price.mul(7),
+						change: +(item.eunex.change * 100).toFixed(2)
+					},
+					spread: +(item.eunex.price - item.mbaex.price).toFixed(2),
+					spreadPercent: (item.eunex.price - item.mbaex.price)/Math.min(item.mbaex.price, item.eunex.price) * 100
+				}
+			})
+			for (let i = 0; i < list.length - 1; i++) {
+				for (let j = i + 1; j < list.length; j++) {
+					if (list[i].spreadPercent < list[j].spreadPercent) {
+						const temp = list[i]
+						list[i] = list[j]
+						list[j] = temp
+					}
+				}
+			}
+			this.list = list
 			Indicator.close()
 		},
 		getCoinList() {
 			Coin.find().then(res => {
 				this.oTabs = res
-				const tabs = ['USDT', 'BTC']
-				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				 
+				const tabs = this.oTabs.filter(item => ['USDT', 'BTC'].includes(item.name))
+				tabs[0].name = 'USDT(K)'
+				this.tabs = tabs
 				this.selectedId = 1
 				this.refresh()
 			})

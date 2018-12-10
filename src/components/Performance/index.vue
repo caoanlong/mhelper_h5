@@ -6,8 +6,8 @@
 			</router-link>
 		</mt-header>
         <mt-navbar class="navbar" v-model="fanstype">
-            <mt-tab-item :id="1">直推用户</mt-tab-item>
-            <mt-tab-item :id="2">粉丝用户</mt-tab-item>
+            <mt-tab-item :id="1">直推用户{{fanstype == 1 && users.length > 3 ? '（' + users.length + '）' : ''}}</mt-tab-item>
+            <mt-tab-item :id="2">粉丝用户{{fanstype == 2 && users.length > 3 ? '（' + users.length + '）' : ''}}</mt-tab-item>
         </mt-navbar>
         <div class="user-list">
             <user v-for="(user, i) in users" :key="i" :user="user"></user>

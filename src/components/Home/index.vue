@@ -13,7 +13,10 @@
 					<svg-icon icon-class="notice"></svg-icon>
 					<span>行情提醒</span>
 				</div>
-				<div slot="right" @click="sheetVisible = true">更多...</div>
+				<div slot="right" @click="sheetVisible = true">
+					<svg-icon icon-class="share"></svg-icon>
+					<span>更多...</span>
+				</div>
 			</mt-header>
 			<div class="platform-tab">
 				<div 
@@ -43,29 +46,31 @@
 				<p class="info-txt-b">©2018-2028 MHelper, Inc. All rights reserved</p>
 			</div>
 			<div class="qrcode-info" v-show="!!qrcodeImg">
-				<div class="qrcode-txt">识别二维码，了解更多行情</div>
 				<div class="qrcode-img">
 					<img id="qrcode-img" :src="qrcodeImg" alt="" />
 				</div>
+				<div class="qrcode-txt">识别二维码，随时掌握行情变化</div>
 			</div>
 		</div>
 		<div style="height:90px" id="block"></div>
-		<mt-popup v-model="popupVisible">
-            <div class="download-div">
+		<modal name="download" width="80%" height="auto" :scrollable="true">
+			<div class="modal-info">
+				<div class="modal-tips">长按图片，保存、发送好友或分享朋友圈</div>
+				<div id="closeBtn" @click="$modal.hide('download')"></div>
+			</div>
+			<div class="download-div">
                 <img class="download-img" :src="imgUri" alt="">
-                <p class="download-txt">长按图片保存</p>
             </div>
-        </mt-popup>
+		</modal>
 	</div>
 </template>
 
 <script>
-import { Indicator, Toast } from 'mint-ui'
+import { Indicator, Toast, MessageBox } from 'mint-ui'
 import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import CoinItem from './components/CoinItem'
 import Tabs from '../Common/Tabs'
-import { Popup } from 'mint-ui'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
@@ -73,10 +78,9 @@ import { saveHtml2Img } from '../../utils/common'
 import { setInterval } from 'timers';
 export default {
 	name: "Home",
-	components: { CoinItem, Tabs, Popup },
+	components: { CoinItem, Tabs },
 	data() {
 		return {
-			popupVisible: false,
 			qrcodeImg: '',
 			imgUri: '',
 			wait: 10,
@@ -96,41 +100,22 @@ export default {
 					}
 				}, 
 				{ 
-					name: '保存行情为图片',
+					name: '发送给朋友',
 					method: () => {
-						const opts = {
-							errorCorrectionLevel: 'H',
-							type: 'image/jpeg',
-							rendererOpts: {
-								quality: 0.3
-							}
-						}
-						const userInfo = localStorage.getItem('userInfo')
-						let link = ''
-						if (userInfo) {
-							const user = JSON.parse(userInfo)
-							link = `https://m.mhelper.co/#/?recommender=${user.userid}`
-						}
-						QRCode.toDataURL(link, opts, (err, url) => {
-							if (err) throw err
-							this.qrcodeImg = url
-							this.$nextTick(() => {
-								const contain = document.getElementById('contain')
-								const about = document.getElementById('about')
-								contain.removeChild(about)
-								html2canvas(contain, {
-									useCORS: true
-								}).then((canvas) => {
-									contain.appendChild(about)
-									// 生成base64图片数据
-									const imgData = canvas.toDataURL('image/png')
-									// 获取生成的图片的url
-									this.imgUri = imgData.replace('image/png', 'image/octet-stream')
-									this.qrcodeImg = ''
-									this.popupVisible = true
-								})
+						if (localStorage.getItem('showmsgbox')) {
+							this.screenshot()
+						} else {
+							MessageBox({
+								message: 'MHelper自动带上您的邀请码，如有人点击，您将获得现金奖励。',
+								showCancelButton: true,
+								confirmButtonText: '我知道了',
+								confirmButtonHighlight: true,
+								cancelButtonText: '不再提示'
+							}).then(action => {
+								if (action == 'cancel') localStorage.setItem('showmsgbox', 1)
+								this.screenshot()
 							})
-						})
+						}
 					}
 				}],
 			selectedId: 1,
@@ -253,6 +238,43 @@ export default {
 					this.timeGo()
 				}, 1000)
 			}
+		},
+		screenshot() {
+			const opts = {
+				errorCorrectionLevel: 'H',
+				type: 'image/jpeg',
+				rendererOpts: {
+					quality: 0.3
+				}
+			}
+			const userInfo = localStorage.getItem('userInfo')
+			let link = 'https://m.mhelper.co'
+			if (userInfo) {
+				const user = JSON.parse(userInfo)
+				link = `https://m.mhelper.co/#/?recommender=${user.userid}`
+			}
+			QRCode.toDataURL(link, opts, (err, url) => {
+				if (err) throw err
+				this.qrcodeImg = url
+				this.$nextTick(() => {
+					const contain = document.getElementById('contain')
+					const about = document.getElementById('about')
+					contain.removeChild(about)
+					contain.style.paddingBottom = '0'
+					html2canvas(contain, {
+						useCORS: true
+					}).then((canvas) => {
+						contain.appendChild(about)
+						contain.style.paddingBottom = '55px'
+						// 生成base64图片数据
+						const imgData = canvas.toDataURL('image/png')
+						// 获取生成的图片的url
+						this.imgUri = imgData.replace('image/png', 'image/octet-stream')
+						this.qrcodeImg = ''
+						this.$modal.show('download')
+					})
+				})
+			})
 		}
 	}
 }
@@ -282,15 +304,30 @@ export default {
 		right 0
 		padding-top 119px
 		padding-bottom 55px
+	.modal-info
+		display flex
+		width 100%
+		position absolute
+		left 0
+		top 0
+		z-index 999
+		background-color rgba(0,0,0,.7)
+		.modal-tips
+			flex 1
+			color #fff
+			line-height 1.6
+			padding 10px
+			font-size 14px
+		#closeBtn
+			flex 0 0 40px
+			background-image url('../../assets/close-white.png')
+			background-position center
+			background-repeat no-repeat
+			background-size 20px
 	.download-div
-		max-width 300px
+		width 100%
 		.download-img
-			max-width 300px
-			height 600px
-		.download-txt
-			text-align center
-			height 50px
-			line-height 50px
+			width 100%
 	.about-info
 		padding 20px 10px
 		background-color #f2f2f2
@@ -317,17 +354,16 @@ export default {
 			line-height 2
 			text-align center
 	.qrcode-info
-		display flex
-		height 90px
-		line-height 90px
 		.qrcode-txt
-			flex 1
-			padding-left 10px
+			text-align center
+			line-height 1
+			position relative
+			top -10px
 		.qrcode-img
-			flex 0 0 90px
+			width 240px
+			margin 0 auto
 			#qrcode-img
-				margin-top 10px
-				width 70px
+				width 100%
 				background-color #ccccccs
 	.refresh
 		position fixed

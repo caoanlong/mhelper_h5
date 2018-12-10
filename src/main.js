@@ -12,6 +12,8 @@ import { VTable, VPagination } from 'vue-easytable'
 
 import Croppa from 'vue-croppa'
 
+import VModal from 'vue-js-modal'
+
 import App from './App'
 import TableMarket from './components/History/components/TableMarket'
 import TablePrice from './components/History/components/TablePrice'
@@ -26,6 +28,7 @@ Vue.config.productionTip = false
 
 Vue.use(MintUI)
 Vue.use(Croppa)
+Vue.use(VModal)
 
 // 注册到全局
 Vue.component(VTable.name, VTable)

@@ -3,38 +3,61 @@
 		<div class="refresh" @click="refresh" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
-        <mt-header fixed :title="$route.meta.title">
-			<router-link to="" slot="left" @click.native="back">
-				<mt-button icon="back">返回</mt-button>
-			</router-link>
-		</mt-header>
-		<div class="platform-tab">
-			<div 
-				class="platform-item mbaex-logo" 
-				:class="{'select-platform': platform == 'mbaex'}" 
-				@click="changePlatform('mbaex')">
+		<div id="contain">
+			<mt-header fixed :title="$route.meta.title">
+				<router-link to="" slot="left" @click.native="back">
+					<mt-button icon="back">返回</mt-button>
+				</router-link>
+				<div slot="right" @click="share">
+					<svg-icon icon-class="share"></svg-icon>
+					<span>发送给朋友</span>
+				</div>
+			</mt-header>
+			<div class="platform-tab">
+				<div 
+					class="platform-item mbaex-logo" 
+					:class="{'select-platform': platform == 'mbaex'}" 
+					@click="changePlatform('mbaex')">
+				</div>
+				<div 
+					class="platform-item eunex-logo" 
+					:class="{'select-platform': platform == 'eunex'}" 
+					@click="changePlatform('eunex')">
+				</div>
 			</div>
-			<div 
-				class="platform-item eunex-logo" 
-				:class="{'select-platform': platform == 'eunex'}" 
-				@click="changePlatform('eunex')">
+			<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<v-table 
+				:title-row-height="30"
+				:row-height="90"
+				is-horizontal-resize
+				:vertical-resize-offset='5'
+				style="width:100%" 
+				:columns="columns"
+				:table-data="tableData">
+			</v-table>
+			<div class="qrcode-info" v-show="!!qrcodeImg">
+				<div class="qrcode-img">
+					<img id="qrcode-img" :src="qrcodeImg" alt="" />
+				</div>
+				<div class="qrcode-txt">识别二维码，随时掌握行情变化</div>
 			</div>
 		</div>
-		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
-		<v-table 
-			:title-row-height="30"
-			:row-height="90"
-			is-horizontal-resize
-			:vertical-resize-offset='5'
-			style="width:100%" 
-			:columns="columns"
-			:table-data="tableData">
-		</v-table>
+		<modal name="download" width="80%" height="auto" :scrollable="true">
+			<div class="modal-info">
+				<div class="modal-tips">长按图片，保存、发送好友或分享朋友圈</div>
+				<div id="closeBtn" @click="$modal.hide('download')"></div>
+			</div>
+			<div class="download-div">
+                <img class="download-img" :src="imgUri" alt="">
+            </div>
+		</modal>
 	</div>
 </template>
 
 <script>
-import { Indicator, Toast } from 'mint-ui'
+import { Indicator, Toast, MessageBox } from 'mint-ui'
+import html2canvas from 'html2canvas'
+import QRCode from 'qrcode'
 import moment from 'moment'
 import Tabs from '../Common/Tabs'
 import Coin from '../../api/Coin'
@@ -45,6 +68,8 @@ export default {
 	components: { Tabs },
 	data() {
 		return {
+			qrcodeImg: '',
+			imgUri: '',
 			wait: 10,
 			canRefresh: true,
 			selectedId: 1,
@@ -167,8 +192,8 @@ export default {
 										? priceRMB.toFixed(2) 
 										: priceRMB.toFixed(6),
 									change: change.toFixed(2),
-									volume: volume > 1000 
-										? (volume/1000).toFixed(2) + '万' 
+									volume: volume > 10000 
+										? (volume/10000).toFixed(2) + '万' 
 										: volume.toFixed(2),
 									platform: market.platform
 								}
@@ -207,6 +232,54 @@ export default {
 				}, 1000)
 			}
 		},
+		share() {
+			if (localStorage.getItem('showmsgbox')) {
+				this.screenshot()
+			} else {
+				MessageBox({
+					message: 'MHelper自动带上您的邀请码，如有人点击，您将获得现金奖励。',
+					showCancelButton: true,
+					confirmButtonText: '我知道了',
+					confirmButtonHighlight: true,
+					cancelButtonText: '不再提示'
+				}).then(action => {
+					if (action == 'cancel') localStorage.setItem('showmsgbox', 1)
+					this.screenshot()
+				})
+			}
+		},
+		screenshot() {
+			const opts = {
+				errorCorrectionLevel: 'H',
+				type: 'image/jpeg',
+				rendererOpts: {
+					quality: 0.3
+				}
+			}
+			const userInfo = localStorage.getItem('userInfo')
+			let link = 'https://m.mhelper.co'
+			if (userInfo) {
+				const user = JSON.parse(userInfo)
+				link = `https://m.mhelper.co/#/?recommender=${user.userid}`
+			}
+			QRCode.toDataURL(link, opts, (err, url) => {
+				if (err) throw err
+				this.qrcodeImg = url
+				this.$nextTick(() => {
+					const contain = document.getElementById('contain')
+					html2canvas(contain, {
+						useCORS: true
+					}).then((canvas) => {
+						// 生成base64图片数据
+						const imgData = canvas.toDataURL('image/png')
+						// 获取生成的图片的url
+						this.imgUri = imgData.replace('image/png', 'image/octet-stream')
+						this.qrcodeImg = ''
+						this.$modal.show('download')
+					})
+				})
+			})
+		},
         back() {
 			this.$router.push({name: 'home'})
 		}
@@ -226,7 +299,7 @@ export default {
 	position fixed
 	left 0
 	top 40px
-	z-index 9999
+	z-index 9
 	width 100%
 	height 40px
 	background-color #ffffff
@@ -266,7 +339,73 @@ export default {
 	left 0
 	right 0
 	bottom 0
-	padding-top 119px
+	#contain
+		position absolute
+		top 0
+		left 0
+		right 0
+		padding-top 119px
+	.modal-info
+		display flex
+		width 100%
+		position absolute
+		left 0
+		top 0
+		z-index 999
+		background-color rgba(0,0,0,.7)
+		.modal-tips
+			flex 1
+			color #fff
+			line-height 1.6
+			padding 10px
+			font-size 14px
+		#closeBtn
+			flex 0 0 40px
+			background-image url('../../assets/close-white.png')
+			background-position center
+			background-repeat no-repeat
+			background-size 20px
+	.download-div
+		width 100%
+		.download-img
+			width 100%
+	.about-info
+		padding 20px 10px
+		background-color #f2f2f2
+		font-size 14px
+		.info-txt
+			color #666
+			font-size 16px
+			text-align center
+		.info-txt-b
+			color #999
+			text-align center
+			font-size 13px
+			line-height 2
+		.features
+			display flex
+			height 30px
+			line-height 30px
+			.feature
+				flex 1
+				color #26a2ff
+				text-align center
+		.about
+			color #26a2ff
+			line-height 2
+			text-align center
+	.qrcode-info
+		.qrcode-txt
+			text-align center
+			line-height 1
+			position relative
+			top -10px
+		.qrcode-img
+			width 240px
+			margin 0 auto
+			#qrcode-img
+				width 100%
+				background-color #ccccccs
 	.refresh
 		position fixed
 		z-index 9999
@@ -287,5 +426,5 @@ export default {
 		left 0
 		top 80px
 		width 100%
-		z-index 9999
+		z-index 9
 </style>
