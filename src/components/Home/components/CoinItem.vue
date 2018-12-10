@@ -11,8 +11,8 @@
                 <div class="num-title">量</div>
                 <div class="num-value">
                     {{
-                        marketCoin.volume > 1000 
-                        ? (marketCoin.volume/1000).toFixed(2) + '万' 
+                        marketCoin.volume > 10000 
+                        ? (marketCoin.volume/10000).toFixed(2) + '万' 
                         : marketCoin.volume.toFixed(2)
                     }}
                 </div>

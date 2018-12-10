@@ -113,9 +113,7 @@ export default {
 						}
 						QRCode.toDataURL(link, opts, (err, url) => {
 							if (err) throw err
-							console.log(url)
 							this.qrcodeImg = url
-
 							this.$nextTick(() => {
 								const contain = document.getElementById('contain')
 								const about = document.getElementById('about')
@@ -123,10 +121,12 @@ export default {
 								html2canvas(contain, {
 									useCORS: true
 								}).then((canvas) => {
+									contain.appendChild(about)
 									// 生成base64图片数据
 									const imgData = canvas.toDataURL('image/png')
 									// 获取生成的图片的url
 									this.imgUri = imgData.replace('image/png', 'image/octet-stream')
+									this.qrcodeImg = ''
 									this.popupVisible = true
 								})
 							})
@@ -149,10 +149,6 @@ export default {
 	},
 	destroyed() {
 		this.timer = null
-	},
-	mounted() {
-		// const contain = document.getElementById('contain')
-		// contain.scrollTop = 0
 	},
 	methods: {
 		changePlatform(platform) {
