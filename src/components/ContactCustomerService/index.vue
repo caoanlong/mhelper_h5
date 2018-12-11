@@ -10,11 +10,19 @@
             <br/>
             【QQ】<br/>
             <a href="tencent://message/?Menu=yes&uin=3338939303&Site=80fans&Service=300&sigT=45a1e5847943b64c6ff3990f8a9e644d2b31356cb0b4ac6b24663a3c8dd0f8aa12a545b1714f9d45">
-                QQ号：3338939303
-            </a><br/>
+                QQ号：<span id="qq">3338939303</span>
+            </a>&nbsp;&nbsp;<button id="qqBtn" data-clipboard-target="#qq">复制</button><br/>
             <br/>
             【微信】<br/>
-            <div @click="popupVisible = true">j88840880 （温馨提醒：微信用户太多，为了获得更好的帮助，建议加QQ）</div><br/>
+            <div class="qrcode">
+                <img class="qrcode-img" src="../../assets/qrcode.jpg" alt="">
+            </div>
+            <div>
+                <span @click="popupVisible = true">
+                    微信号：<span id="wx">j88840880</span>
+                </span>&nbsp;&nbsp;<button id="wxBtn" data-clipboard-target="#wx">复制</button><br/>
+                （温馨提醒：微信用户太多，为了获得更好的帮助，建议加QQ）
+            </div><br/>
             【电话】<br/>
             <a href="tel:0755-88840880">+86(755)88840880</a><br/>
             <br/>
@@ -31,13 +39,32 @@
 </template>
 
 <script>
-import { Popup } from 'mint-ui'
+import { Popup, Toast } from 'mint-ui'
+import ClipboardJS from 'clipboard'
 export default {
     components: { Popup },
     data() {
         return {
             popupVisible: false
         }
+    },
+    mounted() {
+        const qqClipboard = new ClipboardJS('#qqBtn')
+        const wxClipboard = new ClipboardJS('#wxBtn')
+        qqClipboard.on('success', function(e) {
+            console.info('Action:', e.action)
+            console.info('Text:', e.text)
+            console.info('Trigger:', e.trigger)
+            Toast('已复制到剪贴板！')
+            e.clearSelection()
+        })
+        wxClipboard.on('success', function(e) {
+            console.info('Action:', e.action)
+            console.info('Text:', e.text)
+            console.info('Trigger:', e.trigger)
+            Toast('已复制到剪贴板！')
+            e.clearSelection()
+        })
     },
     methods: {
         back() {

@@ -37,13 +37,24 @@ export default {
 				activeColor: '#26a2ff',
 				labelKey: 'name'
 			},
-			list: []
+			list: [],
+			timer: null
 		}
 	},
 	created() {
 		this.getCoinList()
+		this.timer = setInterval(() => {
+			this.autoRefresh()
+		}, 30000)
+	},
+	destroyed() {
+		clearInterval(this.timer)
+		this.timer = null
 	},
 	methods: {
+		autoRefresh() {
+			this.refresh(true)
+		},
 		changeTab(id) {
 			if (this.selectedId != id) {
 				this.selectedId = id
@@ -55,9 +66,9 @@ export default {
 			this.timeGo()
 			this.refresh()
 		},
-		async refresh() {
-			Indicator.open()
-			this.list = []
+		async refresh(bool) {
+			!bool && Indicator.open()
+			!bool && (this.list = [])
 			const mbaexList = await this.getMarketList('mbaex')
 			const eunexList = await this.getMarketList('eunex')
 			const sortData = []
@@ -111,7 +122,7 @@ export default {
 				}
 			}
 			this.list = list
-			Indicator.close()
+			!bool && Indicator.close()
 		},
 		getCoinList() {
 			Coin.find().then(res => {

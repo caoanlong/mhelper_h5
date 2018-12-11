@@ -77,13 +77,24 @@ export default {
 			oTabs: [],
 			platform: 'mbaex',
 			tableData: [],
-			columns: []
+			columns: [],
+			timer: null
 		}
 	},
 	created() {
 		this.getCoinList()
+		this.timer = setInterval(() => {
+			this.autoRefresh()
+		}, 30000)
+	},
+	destroyed() {
+		clearInterval(this.timer)
+		this.timer = null
 	},
 	methods: {
+		autoRefresh() {
+			this.getMarketHistoryList(true)
+		},
 		changePlatform(platform) {
 			this.platform = platform
 			if (this.platform == 'mbaex') {
@@ -135,9 +146,9 @@ export default {
 				this.getMarketHistoryList()
 			})
 		},
-		getMarketHistoryList() {
-			Indicator.open()
-			this.tableData = []
+		getMarketHistoryList(bool) {
+			!bool && Indicator.open()
+			!bool && (this.tableData = [])
 			Market.historyList({
 				coinId: this.selectedId,
 				platform: this.platform
@@ -211,9 +222,9 @@ export default {
 					}
 				}
 				this.tableData = sortData
-				Indicator.close()
+				!bool && Indicator.close()
 			}).catch(err => {
-				Indicator.close()
+				!bool && Indicator.close()
 			})
 		},
 		/**

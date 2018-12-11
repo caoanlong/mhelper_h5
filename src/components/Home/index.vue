@@ -38,8 +38,8 @@
 				<p class="info-txt">实时掌握行情变化  把握每次赚钱机会</p>
 				<div class="features">
 					<router-link tag="div" class="feature" to="attentionpublic">关注公众号</router-link>
-					<div class="feature">获取小程序</div>
-					<div class="feature">意见反馈</div>
+					<div class="feature" @click="notice">获取小程序</div>
+					<a class="feature advice" href="mailto:MHelper@bv-health.com">意见反馈</a>
 					<router-link tag="div" class="feature" to="contactcustomerservice">联系客服</router-link>
 				</div>
 				<router-link tag="div" class="about" to="about">M圈专业的技术团队，旨为M粉量身高</router-link>
@@ -75,7 +75,7 @@ import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
 import { saveHtml2Img } from '../../utils/common'
-import { setInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers';
 export default {
 	name: "Home",
 	components: { CoinItem, Tabs },
@@ -133,6 +133,7 @@ export default {
 		}, 30000)
 	},
 	destroyed() {
+		clearInterval(this.timer)
 		this.timer = null
 	},
 	methods: {
@@ -162,7 +163,7 @@ export default {
 			}
 		},
 		notice() {
-			Toast('暂未开放！')
+			Toast('敬请期待！')
 		},
 		refreshCon() {
 			if (!this.canRefresh) return
@@ -349,6 +350,9 @@ export default {
 				flex 1
 				color #26a2ff
 				text-align center
+				&.advice
+					display block
+					text-decoration none
 		.about
 			color #26a2ff
 			line-height 2

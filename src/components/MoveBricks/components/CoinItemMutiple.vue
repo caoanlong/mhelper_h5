@@ -57,7 +57,7 @@ export default {
     background-color #ffffff
     border-bottom 1px solid #ddd
     .first
-        flex 0 0 50px
+        flex 0 0 46px
         .coin-icon
             width 100%
             height 36px
@@ -85,7 +85,7 @@ export default {
                 color #999
             .coin-price
                 flex 0 0 55px
-                font-size 14px
+                font-size 13px
                 font-weight 500
                 text-align left
             .coin-price-rmb
