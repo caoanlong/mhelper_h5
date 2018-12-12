@@ -14,8 +14,8 @@
 					<span>行情提醒</span>
 				</div>
 				<div slot="right" @click="sheetVisible = true">
-					<svg-icon icon-class="share"></svg-icon>
-					<span>更多...</span>
+					<svg-icon icon-class="component"></svg-icon>
+					<span>更多</span>
 				</div>
 			</mt-header>
 			<div class="platform-tab">

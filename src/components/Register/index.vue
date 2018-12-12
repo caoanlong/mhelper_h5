@@ -9,7 +9,7 @@
         <!-- <mt-field label="图形验证码" placeholder="请输入图形验证码" v-model="captcha">
             <img id="captcha" :src="baseURL + '/customer/verify'" height="45px" width="100px" @click="refreshCaptcha">
         </mt-field> -->
-        <mt-field label="短信验证码" placeholder="请输入短信验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.iCode">
+        <mt-field label="短信验证码" placeholder="请输入短信验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.icode">
             <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
         <mt-field label="邀请码" type="number" v-model="recommender" :disabled="isRecommender"></mt-field>
@@ -30,7 +30,7 @@ export default {
         return {
             member: {
                 cellPhone: '',
-                iCode: '',
+                icode: '',
                 nickName: '',
                 openid: '',
                 avator: ''
@@ -65,7 +65,7 @@ export default {
                 Toast('请输入手机号')
                 return
             }
-            Login.getICode({
+            Login.getc({
                 cellphone: this.member.cellPhone,
                 type: 1
             }).then(res => {
@@ -79,7 +79,7 @@ export default {
                 Toast('请输入手机号')
                 return
             }
-            if (!this.member.iCode) {
+            if (!this.member.c) {
                 Toast('请输入验证码')
                 return
             }

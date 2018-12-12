@@ -7,6 +7,9 @@
 			<router-link to="" slot="left" @click.native="back">
 				<mt-button icon="back">返回</mt-button>
 			</router-link>
+			<div slot="right" @click="share">
+				<svg-icon icon-class="share"></svg-icon>
+			</div>
 		</mt-header>
 		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 		<div>
@@ -16,7 +19,9 @@
 </template>
 
 <script>
-import { Indicator, Toast } from 'mint-ui'
+import { Indicator, Toast, MessageBox } from 'mint-ui'
+import html2canvas from 'html2canvas'
+import QRCode from 'qrcode'
 import Tabs from '../Common/Tabs'
 import moment from 'moment'
 import Coin from '../../api/Coin'
@@ -139,6 +144,54 @@ export default {
 			return Market.find({
 				coinId: this.selectedId,
 				platform
+			})
+		},
+		share() {
+			if (localStorage.getItem('showmsgbox')) {
+				this.screenshot()
+			} else {
+				MessageBox({
+					message: 'MHelper自动带上您的邀请码，如有人点击，您将获得现金奖励。',
+					showCancelButton: true,
+					confirmButtonText: '我知道了',
+					confirmButtonHighlight: true,
+					cancelButtonText: '不再提示'
+				}).then(action => {
+					if (action == 'cancel') localStorage.setItem('showmsgbox', 1)
+					this.screenshot()
+				})
+			}
+		},
+		screenshot() {
+			const opts = {
+				errorCorrectionLevel: 'H',
+				type: 'image/jpeg',
+				rendererOpts: {
+					quality: 0.3
+				}
+			}
+			const userInfo = localStorage.getItem('userInfo')
+			let link = 'https://m.mhelper.co'
+			if (userInfo) {
+				const user = JSON.parse(userInfo)
+				link = `https://m.mhelper.co/#/?recommender=${user.userid}`
+			}
+			QRCode.toDataURL(link, opts, (err, url) => {
+				if (err) throw err
+				this.qrcodeImg = url
+				this.$nextTick(() => {
+					const contain = document.getElementById('contain')
+					html2canvas(contain, {
+						useCORS: true
+					}).then((canvas) => {
+						// 生成base64图片数据
+						const imgData = canvas.toDataURL('image/png')
+						// 获取生成的图片的url
+						this.imgUri = imgData.replace('image/png', 'image/octet-stream')
+						this.qrcodeImg = ''
+						this.$modal.show('download')
+					})
+				})
 			})
 		},
 		/**

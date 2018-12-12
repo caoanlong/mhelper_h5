@@ -10,7 +10,6 @@
 				</router-link>
 				<div slot="right" @click="share">
 					<svg-icon icon-class="share"></svg-icon>
-					<span>发送给朋友</span>
 				</div>
 			</mt-header>
 			<div class="platform-tab">
