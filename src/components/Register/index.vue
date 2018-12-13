@@ -65,7 +65,7 @@ export default {
                 Toast('请输入手机号')
                 return
             }
-            Login.getc({
+            Login.getICode({
                 cellphone: this.member.cellPhone,
                 type: 1
             }).then(res => {
@@ -79,7 +79,7 @@ export default {
                 Toast('请输入手机号')
                 return
             }
-            if (!this.member.c) {
+            if (!this.member.icode) {
                 Toast('请输入验证码')
                 return
             }

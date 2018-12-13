@@ -121,6 +121,11 @@ const router = new Router({
 					meta: { title: '关注公众号' },
 					component: () => import('../components/AttentionPublic')
 				},{
+					path: '/attentionminip',
+					name: 'attentionminip',
+					meta: { title: '关注小程序' },
+					component: () => import('../components/AttentionMiniP')
+				},{
 					path: '/contactcustomerservice',
 					name: 'contactcustomerservice',
 					meta: { title: '联系客服' },

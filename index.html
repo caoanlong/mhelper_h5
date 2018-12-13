@@ -8,8 +8,8 @@
   <script src='https://res.wx.qq.com/open/js/jweixin-1.4.0.js'></script>
   <script>
     window.onload = function () {
-      if (location.hash.indexOf('recommender') > -1) {
-        localStorage.setItem('recommender', location.hash.split('recommender=')[1])
+      if (location.href.indexOf('recommender') > -1) {
+        localStorage.setItem('recommender', location.href.split('recommender=')[1])
       }
     }
 

@@ -74,6 +74,7 @@ export default {
 			if (userInfo) {
 				this.userInfo = JSON.parse(userInfo)
 				this.link = `https://m.mhelper.co/#/?recommender=${this.userInfo.userid}`
+				wx && wx.miniProgram.postMessage({ userid: this.userInfo.userid })
 			}
 		},
 		getWeixinConfig() {

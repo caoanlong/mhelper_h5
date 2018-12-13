@@ -92,6 +92,7 @@ export default {
 				if (item.mbaex && item.eunex) sortData.push(item)
 			}
 			const list = sortData.map(item => {
+				const min = Math.min(item.mbaex.price, item.eunex.price)
 				return {
 					mbaex: {
 						image: item.mbaex.image,
@@ -114,7 +115,7 @@ export default {
 						change: +(item.eunex.change * 100).toFixed(2)
 					},
 					spread: +(item.eunex.price - item.mbaex.price).toFixed(2),
-					spreadPercent: (item.eunex.price - item.mbaex.price)/Math.min(item.mbaex.price, item.eunex.price) * 100
+					spreadPercent: min ? ((item.eunex.price - item.mbaex.price)/min * 100) : ''
 				}
 			})
 			for (let i = 0; i < list.length - 1; i++) {

@@ -16,6 +16,21 @@ export const isWeixin = function () {
     return u.match(/MicroMessenger/i) == "micromessenger"
 }
 
+export const userAgent = function () {
+    const u = navigator.userAgent.toLowerCase()
+    if (u.match(/MicroMessenger/i) == 'micromessenger') {
+        wx.miniProgram.getEnv(function(res) {
+            if (res.miniprogram) {
+                return 'miniprogram'
+            } else {
+                return 'weixin'
+            }
+        })
+    } else {
+        return 'normal'
+    }
+}
+
 //将base64转换为文件
 export const dataURLtoFile = function(dataurl, filename) {
     const ts = new Date().getTime() + '.jpg'

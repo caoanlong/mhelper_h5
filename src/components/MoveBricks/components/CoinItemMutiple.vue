@@ -36,7 +36,7 @@
             <div class="diff-price-title">差价</div>
             <div class="diff-price-txt">{{marketCoin.spread}}</div>
             <div class="diff-price-per" :class="{'big-range': marketCoin.spreadPercent > 10}">
-                {{marketCoin.spreadPercent.toFixed(2)}}%
+                {{marketCoin.spreadPercent ? (marketCoin.spreadPercent.toFixed(2) + '%') : ''}}
             </div>
         </div>
     </div>

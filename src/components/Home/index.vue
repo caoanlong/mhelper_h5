@@ -75,7 +75,6 @@ import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { SORTS } from '../../utils/consts'
 import { saveHtml2Img } from '../../utils/common'
-import { setInterval, clearInterval } from 'timers';
 export default {
 	name: "Home",
 	components: { CoinItem, Tabs },
@@ -131,6 +130,19 @@ export default {
 		this.timer = setInterval(() => {
 			this.autoRefresh()
 		}, 30000)
+		const u = navigator.userAgent.toLowerCase()
+		if (u.match(/MicroMessenger/i) == 'micromessenger') {
+			wx.miniProgram.getEnv(res => {
+				if (res.miniprogram) {
+					this.actions.push({
+						name: '获取小程序',
+						method: () => {
+							this.$router.push({ name: 'attentionminip' })
+						}
+					})
+				}
+			})
+		}
 	},
 	destroyed() {
 		clearInterval(this.timer)
