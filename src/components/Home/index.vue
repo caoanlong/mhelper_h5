@@ -132,14 +132,16 @@ export default {
 		}, 30000)
 		const u = navigator.userAgent.toLowerCase()
 		if (u.match(/MicroMessenger/i) == 'micromessenger') {
-			wx.miniProgram.getEnv(res => {
-				if (res.miniprogram) {
-					this.actions.push({
-						name: '获取小程序',
-						method: () => {
-							this.$router.push({ name: 'attentionminip' })
-						}
-					})
+			// wx.miniProgram.getEnv(res => {
+			// 	if (!res.miniprogram) {
+					
+			// 	}
+			// })
+		} else {
+			this.actions.push({
+				name: '获取小程序',
+				method: () => {
+					this.$router.push({ name: 'attentionminip' })
 				}
 			})
 		}
