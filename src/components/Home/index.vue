@@ -154,20 +154,13 @@ export default {
 		changePlatform(platform) {
 			this.platform = platform
 			if (this.platform == 'mbaex') {
-				const tabs = ['USDT', 'BTC', 'MDP']
+				const tabs = ['USDT', 'BTC', 'MDP', 'USDTK']
 				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
 			} else if (this.platform == 'eunex') {
-				const tabs = ['USDT', 'BTC', 'ETH']
+				const tabs = ['BTC', 'ETH', 'USDTK']
 				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
-				this.tabs[0] = {
-					id: 1,
-					coinId: 1,
-					name: 'USDTK',
-					code: 'USDTK',
-					coinName: 'USDTK'
-				}
 			}
-			this.selectedId = 1
+			this.selectedId = this.tabs[0].coinId
 			this.refresh()
 		},
 		changeTab(id) {
@@ -215,20 +208,13 @@ export default {
 			Coin.find().then(res => {
 				this.oTabs = res
 				if (this.platform == 'mbaex') {
-					const tabs = ['USDT', 'BTC', 'MDP']
+					const tabs = ['USDT', 'BTC', 'MDP', 'USDTK']
 					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
 				} else if (this.platform == 'eunex') {
-					const tabs = ['USDT', 'BTC', 'ETH']
+					const tabs = ['BTC', 'ETH', 'USDTK']
 					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
-					this.tabs[0] = {
-						id: 1,
-						coinId: 1,
-						name: 'USDTK',
-						code: 'USDTK',
-						coinName: 'USDTK'
-					}
 				}
-				this.selectedId = 1
+				this.selectedId = this.tabs[0].coinId
 				this.refresh()
 			})
 		},
