@@ -9,27 +9,14 @@
             <div class="title">为了能在行情变化时第一时间通知您，请关注公众号，不错过任何一次赚钱的机会。</div>
             <div class="qrcode">
                 <img class="qrcode-img" src="../../assets/qrcode.jpg" alt="">
-                <p class="qrcode-txt">{{qrcodeTxt}}</p>
+                <p class="qrcode-txt">扫码关注公众号</p>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { userAgent } from '../../utils/common'
 export default {
-    computed: {
-        qrcodeTxt() {
-            const type = userAgent()
-            if (type == 'miniprogram') {
-                return '微信扫一扫，关注公众号'
-            } else if (type == 'weixin') {
-                return '长按识别图中二维码，关注公众号'
-            } else {
-                return '长按二维码图片后保存图片，微信扫一扫，从相册选取，关注公众号'
-            }
-        }
-    },
     methods: {
         back() {
 			this.$router.go(-1)
@@ -58,5 +45,5 @@ export default {
                 margin 0 auto
             .qrcode-txt
                 text-align center
-                font-size 14px
+                font-size 16px
 </style>

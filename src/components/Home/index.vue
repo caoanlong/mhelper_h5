@@ -38,7 +38,7 @@
 				<p class="info-txt">实时掌握行情变化  把握每次赚钱机会</p>
 				<div class="features">
 					<router-link tag="div" class="feature" to="attentionpublic">关注公众号</router-link>
-					<div class="feature" @click="notice">获取小程序</div>
+					<div class="feature" @click="notice" v-if="!isProMini">获取小程序</div>
 					<a class="feature advice" href="mailto:MHelper@bv-health.com">意见反馈</a>
 					<router-link tag="div" class="feature" to="contactcustomerservice">联系客服</router-link>
 				</div>
@@ -122,7 +122,8 @@ export default {
 			tabs: [],
 			platform: 'mbaex',
 			list: [],
-			timer: null
+			timer: null,
+			isProMini: false
 		}
 	},
 	created() {
@@ -132,11 +133,13 @@ export default {
 		}, 30000)
 		const u = navigator.userAgent.toLowerCase()
 		if (u.match(/MicroMessenger/i) == 'micromessenger') {
-			// wx.miniProgram.getEnv(res => {
-			// 	if (!res.miniprogram) {
-					
-			// 	}
-			// })
+			wx.miniProgram.getEnv(res => {
+				if (res.miniprogram) {
+					this.isProMini = true
+				} else {
+					this.isProMini = false
+				}
+			})
 		} else {
 			this.actions.push({
 				name: '获取小程序',
