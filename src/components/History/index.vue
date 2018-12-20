@@ -365,31 +365,6 @@ export default {
 		width 100%
 		.download-img
 			width 100%
-	.about-info
-		padding 20px 10px
-		background-color #f2f2f2
-		font-size 14px
-		.info-txt
-			color #666
-			font-size 16px
-			text-align center
-		.info-txt-b
-			color #999
-			text-align center
-			font-size 13px
-			line-height 2
-		.features
-			display flex
-			height 30px
-			line-height 30px
-			.feature
-				flex 1
-				color #26a2ff
-				text-align center
-		.about
-			color #26a2ff
-			line-height 2
-			text-align center
 	.qrcode-info
 		.qrcode-txt
 			text-align center
@@ -401,7 +376,7 @@ export default {
 			margin 0 auto
 			#qrcode-img
 				width 100%
-				background-color #ccccccs
+				background-color #cccccc
 	.refresh
 		position fixed
 		z-index 9999

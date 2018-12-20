@@ -3,18 +3,35 @@
 		<div class="refresh" @click="refreshCon" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
-		<mt-header fixed :title="$route.meta.title">
-			<router-link to="" slot="left" @click.native="back">
-				<mt-button icon="back">返回</mt-button>
-			</router-link>
-			<div slot="right" @click="share">
-				<svg-icon icon-class="share"></svg-icon>
+		<div id="contain">
+			<mt-header fixed :title="$route.meta.title">
+				<router-link to="" slot="left" @click.native="back">
+					<mt-button icon="back">返回</mt-button>
+				</router-link>
+				<div slot="right" @click="share">
+					<svg-icon icon-class="share"></svg-icon>
+				</div>
+			</mt-header>
+			<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<div>
+				<coin-item-mutiple v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item-mutiple>
 			</div>
-		</mt-header>
-		<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
-		<div>
-			<coin-item-mutiple v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item-mutiple>
+			<div class="qrcode-info" v-show="!!qrcodeImg">
+				<div class="qrcode-img">
+					<img id="qrcode-img" :src="qrcodeImg" alt="" />
+				</div>
+				<div class="qrcode-txt">识别二维码，随时掌握行情变化</div>
+			</div>
 		</div>
+		<modal name="download" width="80%" height="auto" :scrollable="true">
+			<div class="modal-info">
+				<div class="modal-tips">长按图片，保存、发送好友或分享朋友圈</div>
+				<div id="closeBtn" @click="$modal.hide('download')"></div>
+			</div>
+			<div class="download-div">
+                <img class="download-img" :src="imgUri" alt="">
+            </div>
+		</modal>
 	</div>
 </template>
 
@@ -33,6 +50,8 @@ export default {
 	components: { CoinItemMutiple, Tabs },
 	data() {
 		return {
+			qrcodeImg: '',
+			imgUri: '',
 			wait: 10,
 			canRefresh: true,
 			selectedId: 1,
@@ -133,9 +152,7 @@ export default {
 		getCoinList() {
 			Coin.find().then(res => {
 				this.oTabs = res
-				const tabs = this.oTabs.filter(item => ['USDT', 'BTC', 'USDTK'].includes(item.name))
-				// tabs[0].name = 'USDT(K)'
-				this.tabs = tabs
+				this.tabs = this.oTabs.filter(item => ['BTC', 'USDTK'].includes(item.name))
 				this.selectedId = this.tabs[0].coinId
 				this.refresh()
 			})
@@ -234,8 +251,49 @@ export default {
 	left 0
 	right 0
 	bottom 0
-	padding-top 79px
-	padding-bottom 55px
+	#contain
+		position absolute
+		top 0
+		left 0
+		right 0
+		padding-top 79px
+		padding-bottom 55px
+	.modal-info
+		display flex
+		width 100%
+		position absolute
+		left 0
+		top 0
+		z-index 999
+		background-color rgba(0,0,0,.7)
+		.modal-tips
+			flex 1
+			color #fff
+			line-height 1.6
+			padding 10px
+			font-size 14px
+		#closeBtn
+			flex 0 0 40px
+			background-image url('../../assets/close-white.png')
+			background-position center
+			background-repeat no-repeat
+			background-size 20px
+	.download-div
+		width 100%
+		.download-img
+			width 100%
+	.qrcode-info
+		.qrcode-txt
+			text-align center
+			line-height 1
+			position relative
+			top -10px
+		.qrcode-img
+			width 240px
+			margin 0 auto
+			#qrcode-img
+				width 100%
+				background-color #cccccc
 	.refresh
 		position fixed
 		z-index 9999
@@ -267,5 +325,5 @@ export default {
 		left 0
 		top 40px
 		width 100%
-		z-index 9999
+		z-index 999
 </style>
