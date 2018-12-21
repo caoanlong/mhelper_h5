@@ -161,7 +161,10 @@ export default {
 				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
 			} else if (this.platform == 'eunex') {
 				const tabs = ['BTC', 'ETH', 'USDTK']
-				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+				const tabList = this.oTabs.filter(item => tabs.includes(item.name))
+				tabList.unshift(tabList[tabList.length-1])
+				tabList.pop()
+				this.tabs = tabList
 			}
 			this.selectedId = this.tabs[0].coinId
 			this.refresh()
@@ -215,7 +218,10 @@ export default {
 					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
 				} else if (this.platform == 'eunex') {
 					const tabs = ['BTC', 'ETH', 'USDTK']
-					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
+					const tabList = this.oTabs.filter(item => tabs.includes(item.name))
+					tabList.unshift(tabList[tabList.length-1])
+					tabList.pop()
+					this.tabs = tabList
 				}
 				this.selectedId = this.tabs[0].coinId
 				this.refresh()
