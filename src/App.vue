@@ -10,6 +10,7 @@ import { mapGetters } from 'vuex'
 import { getQueryString, isWeixin } from '../src/utils/common'
 import { APPID } from '../src/utils/consts'
 import Weixin from '../src/api/Weixin'
+import UserVisit from '../src/api/UserVisit'
 export default {
 	name: "App",
 	data() {
@@ -28,11 +29,7 @@ export default {
 			if (isWeixin()) this.getWeixinConfig()
 		}
 	},
-	mounted() {
-		if (isWeixin()) this.getWeixinConfig()
-	},
 	created() {
-		this.setLink()
 		if (isWeixin()) {
 			const openid = localStorage.getItem('openid')
 			if (!openid) {
@@ -48,10 +45,29 @@ export default {
 						&state=index
 						#wechat_redirect`
 				}
+			} else {
+				this.userVisit()
 			}
+		} else {
+			this.userVisit()
 		}
 	},
+	mounted() {
+		if (isWeixin()) this.getWeixinConfig()
+	},
 	methods: {
+		userVisit() {
+			const userInfo = localStorage.getItem('userInfo')
+			if (userInfo) {
+				this.userInfo = JSON.parse(userInfo)
+				UserVisit.uservisit({
+					accountType: 1,
+					userId: this.userInfo.userid
+				}).then(res => {
+					console.log(res)
+				})
+			}
+		},
 		getWxOpenID() {
 			Weixin.getOpenID({
 				code: getQueryString('code')
@@ -74,7 +90,6 @@ export default {
 			if (userInfo) {
 				this.userInfo = JSON.parse(userInfo)
 				this.link = `https://m.mhelper.co/#/?recommender=${this.userInfo.userid}`
-				wx && wx.miniProgram.postMessage({ userid: this.userInfo.userid })
 			}
 		},
 		getWeixinConfig() {

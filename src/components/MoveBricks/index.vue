@@ -152,7 +152,7 @@ export default {
 		getCoinList() {
 			Coin.find().then(res => {
 				this.oTabs = res
-				this.tabs = this.oTabs.filter(item => ['BTC', 'USDTK'].includes(item.name))
+				this.tabs = this.oTabs.filter(item => ['BTC', 'USDTK'].includes(item.name)).reverse()
 				this.selectedId = this.tabs[0].coinId
 				this.refresh()
 			})
