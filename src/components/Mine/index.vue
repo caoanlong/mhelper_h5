@@ -19,6 +19,7 @@
 		<mt-cell title="银行卡" is-link @click.native="hope"></mt-cell>
 		<mt-cell title="关于" is-link to="about"></mt-cell>
 		<mt-cell title="关注公众号获得行情通知" is-link to="attentionpublic"></mt-cell>
+		<mt-cell title="分享好友获现金奖" is-link @click.native="share"></mt-cell>
 	</div>
 </template>
 
@@ -41,6 +42,9 @@ export default {
 		})
 	},
 	methods: {
+		share() {
+			this.$router.push({ name: 'home', query: {screenShot: true} })
+		},
 		hope() {
 			Toast('敬请期待！')
 		}

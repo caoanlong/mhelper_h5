@@ -212,3 +212,17 @@ function shareShow(){
 		(e.index>0)&&shareAction(shareBts[e.index-1],false);
     });
 }
+
+// bus总线-观察者模式
+
+export const Bus = {
+    callbacks: [],
+    on: function(type, handler) {
+        this.callbacks.push({ type, handler })
+    },
+    emit: function(type, data) {
+        for (let i = 0; i < this.callbacks.length; i++) {
+            if (type == this.callbacks[i].type) this.callbacks[i].handler(data)
+        }
+    }
+}

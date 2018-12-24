@@ -33,6 +33,7 @@ export default {
                 icode: '',
                 nickName: '',
                 openid: '',
+                unionid: '',
                 avator: ''
             },
             captcha: '',
@@ -89,6 +90,7 @@ export default {
                 this.member.nickName = wxUser.nickname
                 this.member.avator = wxUser.headimgurl
                 this.member.openid = wxUser.openid
+                this.member.unionid = wxUser.unionid
             }
             if (this.recommender) this.member.recommender = this.recommender
             Login.registry(this.member).then(res => {

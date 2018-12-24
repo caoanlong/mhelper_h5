@@ -138,12 +138,12 @@ export default {
 					this.isProMini = true
 				} else {
 					this.isProMini = false
-				}
-			})
-			this.actions.push({
-				name: '获取小程序',
-				method: () => {
-					this.$router.push({ name: 'attentionminip' })
+					this.actions.push({
+						name: '获取小程序',
+						method: () => {
+							this.$router.push({ name: 'attentionminip' })
+						}
+					})
 				}
 			})
 		} else {
@@ -203,6 +203,7 @@ export default {
 			}
 			this.list = sortData
 			Indicator.close()
+			if (this.$route.query.screenShot) this.screenshot()
 		},
 		async autoRefresh() {
 			const list = await this.getMarketList('mbaex')

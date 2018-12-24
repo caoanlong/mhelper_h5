@@ -27,19 +27,7 @@ export default {
         selected(name) {
             this.$router.push({ name })
         }
-    },
-    created() {
-        // if (/MicroMessenger/i.test(navigator.userAgent)) {
-        // 	//ios的ua中无miniProgram，很坑爹,但都有MicroMessenger（表示是微信浏览器）
-        //     wx.miniProgram.getEnv((res)=>{
-        //         if (res.miniprogram) {
-        //             this.isMiniprogram = true
-        //         } else {
-        //             this.isMiniprogram = false
-        //         }
-        //     })
-        // }
-    },
+    }
 }
 </script>
 
