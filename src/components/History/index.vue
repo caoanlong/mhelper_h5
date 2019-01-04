@@ -4,7 +4,10 @@
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
 		<div id="contain">
-			<mt-header fixed :title="$route.meta.title">
+			<mt-header 
+				style="width:100%;top:0;z-index:20" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:title="$route.meta.title">
 				<router-link to="" slot="left" @click.native="back">
 					<mt-button icon="back">返回</mt-button>
 				</router-link>
@@ -12,7 +15,7 @@
 					<svg-icon icon-class="share"></svg-icon>
 				</div>
 			</mt-header>
-			<div class="platform-tab">
+			<div class="platform-tab" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}">
 				<div 
 					class="platform-item mbaex-logo" 
 					:class="{'select-platform': platform == 'mbaex'}" 
@@ -24,7 +27,7 @@
 					@click="changePlatform('eunex')">
 				</div>
 			</div>
-			<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<tabs class="navbar" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 			<v-table 
 				:title-row-height="30"
 				:row-height="90"
@@ -67,6 +70,7 @@ export default {
 	components: { Tabs },
 	data() {
 		return {
+			isScreenShot: false,
 			qrcodeImg: '',
 			imgUri: '',
 			wait: 10,
@@ -267,11 +271,13 @@ export default {
 			QRCode.toDataURL(link, opts, (err, url) => {
 				if (err) throw err
 				this.qrcodeImg = url
+				this.isScreenShot = true
 				this.$nextTick(() => {
 					const contain = document.getElementById('contain')
 					html2canvas(contain, {
 						useCORS: true
 					}).then((canvas) => {
+						this.isScreenShot = false
 						// 生成base64图片数据
 						const imgData = canvas.toDataURL('image/png')
 						// 获取生成的图片的url

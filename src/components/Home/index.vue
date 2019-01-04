@@ -8,7 +8,10 @@
 			v-model="sheetVisible">
 		</mt-actionsheet>
 		<div id="contain">
-			<mt-header fixed :title="$route.meta.title">
+			<mt-header 
+				style="width:100%;top:0;z-index:20" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:title="$route.meta.title">
 				<div slot="left" @click="notice">
 					<svg-icon icon-class="notice"></svg-icon>
 					<span>行情提醒</span>
@@ -18,7 +21,7 @@
 					<span>更多</span>
 				</div>
 			</mt-header>
-			<div class="platform-tab">
+			<div class="platform-tab" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}">
 				<div 
 					class="platform-item mbaex-logo" 
 					:class="{'select-platform': platform == 'mbaex'}" 
@@ -30,7 +33,7 @@
 					@click="changePlatform('eunex')">
 				</div>
 			</div>
-			<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<tabs class="navbar" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 			<div id="coins">
 				<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 			</div>
@@ -80,6 +83,7 @@ export default {
 	components: { CoinItem, Tabs },
 	data() {
 		return {
+			isScreenShot: false,
 			qrcodeImg: '',
 			imgUri: '',
 			wait: 10,
@@ -274,6 +278,7 @@ export default {
 				if (err) throw err
 				this.qrcodeImg = url
 				this.$nextTick(() => {
+					this.isScreenShot = true
 					const contain = document.getElementById('contain')
 					const about = document.getElementById('about')
 					contain.removeChild(about)
@@ -281,6 +286,7 @@ export default {
 					html2canvas(contain, {
 						useCORS: true
 					}).then((canvas) => {
+						this.isScreenShot = false
 						contain.appendChild(about)
 						contain.style.paddingBottom = '55px'
 						// 生成base64图片数据

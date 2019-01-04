@@ -4,7 +4,10 @@
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
 		<div id="contain">
-			<mt-header fixed :title="$route.meta.title">
+			<mt-header 
+				style="width:100%;top:0;z-index:20" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:title="$route.meta.title">
 				<router-link to="" slot="left" @click.native="back">
 					<mt-button icon="back">返回</mt-button>
 				</router-link>
@@ -12,7 +15,7 @@
 					<svg-icon icon-class="share"></svg-icon>
 				</div>
 			</mt-header>
-			<tabs class="navbar" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<tabs class="navbar" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
 			<div>
 				<coin-item-mutiple v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item-mutiple>
 			</div>
@@ -50,6 +53,7 @@ export default {
 	components: { CoinItemMutiple, Tabs },
 	data() {
 		return {
+			isScreenShot: false,
 			qrcodeImg: '',
 			imgUri: '',
 			wait: 10,
@@ -196,11 +200,13 @@ export default {
 			QRCode.toDataURL(link, opts, (err, url) => {
 				if (err) throw err
 				this.qrcodeImg = url
+				this.isScreenShot = true
 				this.$nextTick(() => {
 					const contain = document.getElementById('contain')
 					html2canvas(contain, {
 						useCORS: true
 					}).then((canvas) => {
+						this.isScreenShot = false
 						// 生成base64图片数据
 						const imgData = canvas.toDataURL('image/png')
 						// 获取生成的图片的url
