@@ -9,6 +9,7 @@
         <!-- <mt-field label="图形验证码" placeholder="请输入图形验证码" v-model="captcha">
             <img id="captcha" :src="baseURL + '/customer/verify'" height="45px" width="100px" @click="refreshCaptcha">
         </mt-field> -->
+        <mt-field label="密码" placeholder="请输入..." v-model="member.password"></mt-field>
         <mt-field label="短信验证码" placeholder="请输入短信验证码" type="number" :attr="{ maxlength: 6 }" v-model="member.icode">
             <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
@@ -30,6 +31,7 @@ export default {
         return {
             member: {
                 cellPhone: '',
+                password: '',
                 icode: '',
                 nickName: '',
                 openid: '',
@@ -78,6 +80,10 @@ export default {
         register() {
             if (!this.member.cellPhone) {
                 Toast('请输入手机号')
+                return
+            }
+            if (!this.member.password) {
+                Toast('请输入密码')
                 return
             }
             if (!this.member.icode) {

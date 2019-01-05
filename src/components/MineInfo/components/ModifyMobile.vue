@@ -6,10 +6,11 @@
 			</div>
         </mt-header>
         <mt-field label="当前手机号" placeholder="请输入..." :value="curmobile" disabled></mt-field>
+        <mt-field label="密码" placeholder="请输入..." v-model="password"></mt-field>
+        <mt-field label="新手机号" placeholder="请输入..." v-model="cellphone"></mt-field>
         <mt-field label="验证码" placeholder="请输入验证码" type="number" :attr="{ maxlength: 6 }" v-model="icode">
             <mt-button size="small" :disabled="isGetVCode" @click="getVcode">{{getVcodeText}}</mt-button>
         </mt-field>
-        <mt-field label="新手机号" placeholder="请输入..." v-model="cellphone"></mt-field>
         <div class="modify">
 			<mt-button type="primary" style="width:100%" @click="updateMobile">提交</mt-button>
 		</div>
@@ -24,6 +25,7 @@ export default {
     data() {
         return {
             curmobile: '',
+            password: '',
             cellphone: '',
             icode: '',
             captcha: '',
@@ -38,13 +40,14 @@ export default {
     methods: {
         getVcode() {
             if (this.isGetVCode) return
-            if (!this.curmobile) {
-                Toast('请输入当前手机号')
+            if (!this.cellphone) {
+                Toast('请输入新手机号')
                 return
             }
             this.timeGo()
             Login.getICode({
-                cellphone: this.curmobile
+                cellphone: this.cellphone,
+                type: 3
             }).then(res => {
                 // Toast('验证码：' + res)
             })
@@ -61,11 +64,12 @@ export default {
             }
             Customer.update({
                 registryDto: {
-                    cellPhone: this.curmobile,
+                    cellPhone: this.cellphone,
+                    password: this.password,
                     icode: this.icode
                 },
                 customerModel: {
-                    cellphone: this.cellphone
+                    cellphone: this.curmobile
                 }
             }).then(res => {
                 Toast(res.data.msg)
