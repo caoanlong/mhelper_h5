@@ -1,30 +1,30 @@
 <template>
     <div class="wrapper">
         <div class="item first">
-            <img class="coin-icon" v-lazy="marketCoin.image" alt="">
+            <img class="coin-icon" :src="marketCoin.image ? IMGURL + marketCoin.image : require('../../../assets/defaultImg.svg')">
         </div>
         <div class="item one">
             <div class="up">
-                <div class="market">{{marketCoin.name.split('/')[0]}}</div>
+                <div class="market">{{marketCoin.coinname}}</div>
             </div>
             <div class="down">
                 <div class="num-title">量</div>
                 <div class="num-value">
                     {{
-                        marketCoin.volume > 10000 
-                        ? (marketCoin.volume/10000).toFixed(2) + '万' 
-                        : marketCoin.volume.toFixed(2)
+                        +marketCoin.volume > 10000 
+                        ? (+marketCoin.volume/10000).toFixed(2) + '万' 
+                        : Number(marketCoin.volume).toFixed(2)
                     }}
                 </div>
             </div>
         </div>
         <div class="item two" :class="marketCoin.change > 0 ? 'green' : 'red'">
-            <div class="up">{{marketCoin.price}}</div>
-            <div class="down">￥{{(marketCoin.price).mul(7)}}</div>
+            <div class="up">{{marketCoin.lastprice}}</div>
+            <div class="down">￥{{(+marketCoin.lastprice).mul(7)}}</div>
         </div>
         <div class="item three">
-            <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'">
-                {{marketCoin.platform == 'eunex' ? (marketCoin.change * 100).toFixed(2) : marketCoin.change}}%
+            <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'" v-if="marketCoin.change">
+                {{marketCoin.change}}%
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@
 		</div>
 		<div id="contain">
 			<mt-header 
-				style="width:100%;top:0;z-index:20" 
+				style="width:100%;top:0;left:0;z-index:20" 
 				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
 				:title="$route.meta.title">
 				<router-link to="" slot="left" @click.native="back">

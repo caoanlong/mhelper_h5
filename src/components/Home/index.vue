@@ -9,7 +9,7 @@
 		</mt-actionsheet>
 		<div id="contain">
 			<mt-header 
-				style="width:100%;top:0;z-index:20" 
+				style="width:100%;top:0;left:0;z-index:20" 
 				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
 				:title="$route.meta.title">
 				<div slot="left" @click="notice">
@@ -21,19 +21,21 @@
 					<span>更多</span>
 				</div>
 			</mt-header>
-			<div class="platform-tab" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}">
-				<div 
-					class="platform-item mbaex-logo" 
-					:class="{'select-platform': platform == 'mbaex'}" 
-					@click="changePlatform('mbaex')">
-				</div>
-				<div 
-					class="platform-item eunex-logo" 
-					:class="{'select-platform': platform == 'eunex'}" 
-					@click="changePlatform('eunex')">
-				</div>
-			</div>
-			<tabs class="navbar" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<ly-tab 
+				class="market-tab" 
+				:items="markets" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:options="{'labelKey': 'market', 'activeColor': '#1d98bd'}"
+				@change="changeMarket">
+			</ly-tab>
+			<ly-tab 
+				class="navbar" 
+				v-model="selectedCurrency"
+				:items="currencys" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:options="{'labelKey': 'currency', 'activeColor': '#1d98bd'}"
+				@change="changeCurrency">
+			</ly-tab>
 			<div id="coins">
 				<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 			</div>
@@ -89,6 +91,15 @@ export default {
 			wait: 10,
 			canRefresh: true,
 			sheetVisible: false,
+			selectedId: 1,
+			selectedCurrency: 0,
+			currency: '',
+			currencys: [],
+			market: '',
+			markets: [],
+			list: [],
+			timer: null,
+			isProMini: false,
 			actions: [
 				{ 
 					name: '历史行情',
@@ -120,20 +131,14 @@ export default {
 							})
 						}
 					}
-				}],
-			selectedId: 1,
-			oTabs: [],
-			tabs: [],
-			platform: 'mbaex',
-			list: [],
-			timer: null,
-			isProMini: false
+				}
+			]
 		}
 	},
 	created() {
-		this.getCoinList()
+		this.getMarkets()
 		this.timer = setInterval(() => {
-			this.autoRefresh()
+			this.getCoinTickByCurrency(true)
 		}, 30000)
 		const u = navigator.userAgent.toLowerCase()
 		if (u.match(/MicroMessenger/i) == 'micromessenger') {
@@ -164,84 +169,51 @@ export default {
 		this.timer = null
 	},
 	methods: {
-		changePlatform(platform) {
-			this.platform = platform
-			if (this.platform == 'mbaex') {
-				const tabs = ['USDT', 'BTC', 'MDP', 'USDTK']
-				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
-			} else if (this.platform == 'eunex') {
-				const tabs = ['BTC', 'ETH', 'USDTK']
-				const tabList = this.oTabs.filter(item => tabs.includes(item.name))
-				tabList.unshift(tabList[tabList.length-1])
-				tabList.pop()
-				this.tabs = tabList
-			}
-			this.selectedId = this.tabs[0].coinId
-			this.refresh()
-		},
-		changeTab(id) {
-			if (this.selectedId != id) {
-				this.selectedId = id
-				this.refresh()
-			}
-		},
 		notice() {
 			Toast('敬请期待！')
 		},
 		refreshCon() {
 			if (!this.canRefresh) return
 			this.timeGo()
-			this.refresh()
+			this.getCoinTickByCurrency()
 		},
-		async refresh() {
-			Indicator.open()
-			this.list = []
-			const list = await this.getMarketList('mbaex')
-			const sortData = []
-			for (let i = 0; i < SORTS.length; i++) {
-				for (let x = 0; x < list.length; x++) {
-					if (list[x].name.split('/')[0].includes(SORTS[i])) {
-						sortData.push(list[x])
-					}
-				}
-			}
-			this.list = sortData
-			Indicator.close()
-			if (this.$route.query.screenShot) this.screenshot()
+		changeMarket({ market }) {
+			this.market = market
+			this.getCurrencys()
 		},
-		async autoRefresh() {
-			const list = await this.getMarketList('mbaex')
-			const sortData = []
-			for (let i = 0; i < SORTS.length; i++) {
-				for (let x = 0; x < list.length; x++) {
-					if (list[x].name.split('/')[0].includes(SORTS[i])) {
-						sortData.push(list[x])
-					}
-				}
-			}
-			this.list = sortData
+		changeCurrency({ currency }) {
+			this.currency = currency
+			this.getCoinTickByCurrency()
 		},
-		getCoinList() {
-			Coin.find().then(res => {
-				this.oTabs = res
-				if (this.platform == 'mbaex') {
-					const tabs = ['USDT', 'BTC', 'MDP', 'USDTK']
-					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
-				} else if (this.platform == 'eunex') {
-					const tabs = ['BTC', 'ETH', 'USDTK']
-					const tabList = this.oTabs.filter(item => tabs.includes(item.name))
-					tabList.unshift(tabList[tabList.length-1])
-					tabList.pop()
-					this.tabs = tabList
-				}
-				this.selectedId = this.tabs[0].coinId
-				this.refresh()
+		getMarkets() {
+			Market.getmarkets().then(res => {
+				this.market = res[0]
+				this.markets = res.map(market => {
+					return { market }
+				})
+				this.getCurrencys()
 			})
 		},
-		getMarketList(platform) {
-			return Market.find({
-				coinId: this.selectedId,
-				platform: this.platform
+		getCurrencys() {
+			Market.getcurrencys({
+				market: this.market
+			}).then(res => {
+				this.selectedCurrency = 0
+				this.currency = res[0]
+				this.currencys = res.map(currency => {
+					return { currency }
+				})
+				this.getCoinTickByCurrency()
+			})
+		},
+		getCoinTickByCurrency(bool) {
+			!bool && Indicator.open()
+			Market.getcointickbycurrency({
+				currency: this.currency,
+				market: this.market
+			}).then(res => {
+				this.list = res
+				!bool && Indicator.close()
 			})
 		},
 		/**
@@ -311,6 +283,8 @@ export default {
 .v-table-title-class
 	color #999
 	font-size 12px
+.ly-tabbar
+	box-shadow none !important
 </style>
 
 <style lang="stylus" scoped>
@@ -325,7 +299,7 @@ export default {
 		top 0
 		left 0
 		right 0
-		padding-top 119px
+		padding-top 135px
 		padding-bottom 55px
 	.modal-info
 		display flex
@@ -406,59 +380,19 @@ export default {
 		background-color #26a2ff
 		opacity 0.7
 		box-shadow 0 2px 4px rgba(0,0,0,.4)
-	.platform-tab
+	.market-tab
 		position fixed
 		left 0
 		top 40px
 		z-index 999
 		width 100%
-		height 40px
 		background-color #ffffff
-		display flex
-		&:after
-			position absolute
-			bottom 0
-			left 0
-			content " "
-			display block
-			height 1px
-			width 100%
-			border-bottom 1px solid #e2e2e2
-			-webkit-transform-origin 0 100%
-			transform-origin 0 100%
-			-webkit-transform scaleY(0.5)
-			transform scaleY(0.5)
-		.platform-item
-			flex 1
-			&.mbaex-logo
-				height 100%
-				background-image url('../../assets/logo-mbaex.png')
-				background-repeat no-repeat
-				background-size 50%
-				background-position center
-			&.eunex-logo
-				height 100%
-				background-image url('../../assets/logo-eunex.png')
-				background-repeat no-repeat
-				background-size 50%
-				background-position center
-		.select-platform
-			position relative
-			&:after
-				content ''
-				display block
-				width 100%
-				height 3px
-				background-color #26a2ff
-				position absolute
-				left 0
-				bottom 0
 	.navbar
 		position fixed
 		left 0
 		width 100%
 		z-index 999
-		top 80px
+		top 88px
 	.logo
 		display flex
 		align-items center

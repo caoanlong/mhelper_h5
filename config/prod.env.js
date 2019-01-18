@@ -3,5 +3,5 @@ module.exports = {
 	NODE_ENV: '"production"',
 	ENV_CONFIG: '"prod"',
 	BASE_API: '"https://api.mhelper.co"',
-	IMG_API: '"http://develop.we-service.cn/hdd/image/"'
+	IMG_API: '"http://file.mhelper.co/image/"'
 }

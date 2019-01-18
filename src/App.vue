@@ -63,9 +63,7 @@ export default {
 				UserVisit.uservisit({
 					accountType: 1,
 					userId: this.userInfo.userid
-				}).then(res => {
-					console.log(res)
-				})
+				}).then(res => {})
 			}
 		},
 		getWxOpenID() {

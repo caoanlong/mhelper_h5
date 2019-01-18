@@ -13,6 +13,7 @@ import { VTable, VPagination } from 'vue-easytable'
 import Croppa from 'vue-croppa'
 
 import VModal from 'vue-js-modal'
+import LyTab from './components/Common/LyTab'
 
 import App from './App'
 import TableMarket from './components/History/components/TableMarket'
@@ -26,11 +27,14 @@ import './utils/numberFixed'
 
 Vue.config.productionTip = false
 
+Vue.prototype.IMGURL = process.env.IMG_API
+
 Vue.use(MintUI)
 Vue.use(Croppa)
 Vue.use(VModal)
 
 // 注册到全局
+Vue.component(LyTab.name, LyTab)
 Vue.component(VTable.name, VTable)
 Vue.component(VPagination.name, VPagination)
 

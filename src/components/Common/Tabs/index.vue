@@ -2,11 +2,11 @@
     <div class="tabs">
         <div 
             class="item" 
-            :class="{'selected': selected == item.id}" 
-            v-for="item in tabs" 
-            :key="item.id" 
-            @click="select(item.id)">
-            {{item.name}}
+            :class="{'selected': selected == item}" 
+            v-for="(item, i) in tabs" 
+            :key="i" 
+            @click="select(item)">
+            {{item}}
         </div>
     </div>
 </template>
@@ -18,8 +18,8 @@ export default {
         selected: Number | String
     },
     methods: {
-        select(id) {
-            this.$emit('change', id)
+        select(item) {
+            this.$emit('change', item)
         }
     }
 }
