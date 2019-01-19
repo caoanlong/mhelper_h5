@@ -22,6 +22,7 @@
 				</div>
 			</mt-header>
 			<ly-tab 
+				:isImg="true" 
 				class="market-tab" 
 				:items="markets" 
 				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
