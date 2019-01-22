@@ -13,6 +13,17 @@ class Market extends Base {
         })
     }
 
+    newhistoryList(params) {
+        return new Promise((resolve, reject) => {
+            this.request({
+                url: this.baseUrl + '/newhistoryList',
+                params
+            }).then(res => {
+                resolve(res.data.data || res.data || res)
+            }).catch(err => reject(err))
+        })
+    }
+
     getmarkets(params) {
         return new Promise((resolve, reject) => {
             this.request({

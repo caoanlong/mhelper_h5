@@ -15,7 +15,13 @@
 					<svg-icon icon-class="share"></svg-icon>
 				</div>
 			</mt-header>
-			<tabs class="navbar" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<tabs 
+				class="navbar" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:selected="selectedId" 
+				:tabs="tabs" 
+				@change="changeTab">
+			</tabs>
 			<div>
 				<coin-item-mutiple v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item-mutiple>
 			</div>

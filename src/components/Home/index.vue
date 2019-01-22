@@ -79,7 +79,6 @@ import CoinItem from './components/CoinItem'
 import Tabs from '../Common/Tabs'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
-import { SORTS } from '../../utils/consts'
 import { saveHtml2Img } from '../../utils/common'
 export default {
 	name: "Home",
@@ -92,7 +91,6 @@ export default {
 			wait: 10,
 			canRefresh: true,
 			sheetVisible: false,
-			selectedId: 1,
 			selectedCurrency: 0,
 			currency: '',
 			currencys: [],

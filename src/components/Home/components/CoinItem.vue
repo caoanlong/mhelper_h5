@@ -23,7 +23,7 @@
             <div class="down">￥{{(+marketCoin.lastprice).mul(7)}}</div>
         </div>
         <div class="item three">
-            <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'" v-if="marketCoin.change">
+            <div class="change-tag" :class="marketCoin.change > 0 ? 'rise' : 'fall'" v-if="marketCoin.change || marketCoin.change === 0">
                 {{marketCoin.change}}%
             </div>
         </div>

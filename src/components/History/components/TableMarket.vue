@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <img class="logo" :src="rowData.image"/>
-        <div class="name">{{rowData.name.split('/')[0]}}</div>
+        <div class="name">{{rowData.coinname}}</div>
     </div>
 </template>
 
@@ -28,6 +28,7 @@ export default {
     .logo
         display block
         width 40px
+        height 40px
         margin 15px auto 0 auto
     .name
         line-height 1.5

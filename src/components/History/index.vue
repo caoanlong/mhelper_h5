@@ -1,6 +1,6 @@
 <template>
 	<div class="history-container">
-		<div class="refresh" @click="refresh" v-if="canRefresh">
+		<div class="refresh" @click="refreshCon" v-if="canRefresh">
 			<svg-icon icon-class="refresh"></svg-icon>
 		</div>
 		<div id="contain">
@@ -15,19 +15,22 @@
 					<svg-icon icon-class="share"></svg-icon>
 				</div>
 			</mt-header>
-			<div class="platform-tab" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}">
-				<div 
-					class="platform-item mbaex-logo" 
-					:class="{'select-platform': platform == 'mbaex'}" 
-					@click="changePlatform('mbaex')">
-				</div>
-				<div 
-					class="platform-item eunex-logo" 
-					:class="{'select-platform': platform == 'eunex'}" 
-					@click="changePlatform('eunex')">
-				</div>
-			</div>
-			<tabs class="navbar" :style="{'position': isScreenShot ? 'absolute' : 'fixed'}" :selected="selectedId" :tabs="tabs" @change="changeTab"></tabs>
+			<ly-tab 
+				:isImg="true" 
+				class="market-tab" 
+				:items="markets" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:options="{'labelKey': 'market', 'activeColor': '#1d98bd'}"
+				@change="changeMarket">
+			</ly-tab>
+			<ly-tab 
+				class="navbar" 
+				v-model="selectedCurrency"
+				:items="currencys" 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
+				:options="{'labelKey': 'currency', 'activeColor': '#1d98bd'}"
+				@change="changeCurrency">
+			</ly-tab>
 			<v-table 
 				:title-row-height="30"
 				:row-height="90"
@@ -61,13 +64,9 @@ import { Indicator, Toast, MessageBox } from 'mint-ui'
 import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import moment from 'moment'
-import Tabs from '../Common/Tabs'
-import Coin from '../../api/Coin'
 import Market from '../../api/Market'
-import { SORTS } from '../../utils/consts'
 export default {
 	name: "Home",
-	components: { Tabs },
 	data() {
 		return {
 			isScreenShot: false,
@@ -75,9 +74,11 @@ export default {
 			imgUri: '',
 			wait: 10,
 			canRefresh: true,
-			selectedId: 1,
-			tabs: [],
-			oTabs: [],
+			selectedCurrency: 0,
+			currency: '',
+			currencys: [],
+			market: '',
+			markets: [],
 			platform: 'mbaex',
 			tableData: [],
 			columns: [],
@@ -85,9 +86,9 @@ export default {
 		}
 	},
 	created() {
-		this.getCoinList()
+		this.getMarkets()
 		this.timer = setInterval(() => {
-			this.autoRefresh()
+			this.getHistory(true)
 		}, 30000)
 	},
 	destroyed() {
@@ -95,58 +96,45 @@ export default {
 		this.timer = null
 	},
 	methods: {
-		autoRefresh() {
-			this.getMarketHistoryList(true)
-		},
-		changePlatform(platform) {
-			this.platform = platform
-			if (this.platform == 'mbaex') {
-				const tabs = ['USDT', 'BTC', 'MDP', 'USDTK']
-				this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
-			} else if (this.platform == 'eunex') {
-				const tabs = ['BTC', 'ETH', 'USDTK']
-				const tabList = this.oTabs.filter(item => tabs.includes(item.name))
-				tabList.unshift(tabList[tabList.length-1])
-				tabList.pop()
-				this.tabs = tabList
-			}
-			this.selectedId = this.tabs[0].coinId
-			this.getMarketHistoryList()
-		},
-		changeTab(id) {
-			if (this.selectedId != id) {
-				this.selectedId = id
-				this.getMarketHistoryList()
-			}
-		},
-		refresh() {
+		refreshCon() {
 			if (!this.canRefresh) return
 			this.timeGo()
-			this.getMarketHistoryList()
+			this.getHistory()
 		},
-		getCoinList() {
-			Coin.find().then(res => {
-				this.oTabs = res
-				if (this.platform == 'mbaex') {
-					const tabs = ['USDT', 'BTC', 'MDP', 'USDTK']
-					this.tabs = this.oTabs.filter(item => tabs.includes(item.name))
-				} else if (this.platform == 'eunex') {
-					const tabs = ['BTC', 'ETH', 'USDTK']
-					const tabList = this.oTabs.filter(item => tabs.includes(item.name))
-					tabList.unshift(tabList[tabList.length-1])
-					tabList.pop()
-					this.tabs = tabList
-				}
-				this.selectedId = this.tabs[0].coinId
-				this.getMarketHistoryList()
+		changeMarket({ market }) {
+			this.market = market
+			this.getCurrencys()
+		},
+		changeCurrency({ currency }) {
+			this.currency = currency
+			this.getHistory()
+		},
+		getMarkets() {
+			Market.getmarkets().then(res => {
+				this.market = res[0]
+				this.markets = res.map(market => {
+					return { market }
+				})
+				this.getCurrencys()
 			})
 		},
-		getMarketHistoryList(bool) {
+		getCurrencys() {
+			Market.getcurrencys({
+				market: this.market
+			}).then(res => {
+				this.selectedCurrency = 0
+				this.currency = res[0]
+				this.currencys = res.map(currency => {
+					return { currency }
+				})
+				this.getHistory()
+			})
+		},
+		getHistory(bool) {
 			!bool && Indicator.open()
-			!bool && (this.tableData = [])
-			Market.historyList({
-				coinId: this.selectedId,
-				platform: this.platform
+			Market.newhistoryList({
+				currency: this.currency,
+				market: this.market
 			}).then(res => {
 				const columns = []
 				for (let x = 0; x < res.length; x++) {
@@ -179,17 +167,19 @@ export default {
 				const today = res[0]
 				const data = []
 				for (let i = 0; i < today.markets.length; i++) {
-					const name = today.markets[i].name
-					const image = today.markets[i].image
-					const item = { name, image }
+					const coinname = today.markets[i].coinname
+					const image = today.markets[i].image 
+						? this.IMGURL + today.markets[i].image 
+						: require('../../assets/defaultImg.svg')
+					const item = { coinname, image }
 					for (let j = 0; j < res.length; j++) {
 						for (let y = 0; y < res[j].markets.length; y++) {
 							const market = res[j].markets[y]
-							if (name == market.name) {
-								const price = market.price
-								const priceRMB = price.mul(7)
-								const change = market.change
-								const volume = market.volume
+							if (coinname == market.coinname) {
+								const price = +market.lastprice
+								const priceRMB = price ? price.mul(7) : 0
+								const change = +market.change
+								const volume = +market.volume
 								item[moment(res[j].date).format('MM-DD')] = {
 									price: price > 0.001 
 										? price.toFixed(2) 
@@ -197,7 +187,7 @@ export default {
 									priceRMB: priceRMB > 0.001 
 										? priceRMB.toFixed(2) 
 										: priceRMB.toFixed(6),
-									change: change.toFixed(2),
+									change: change ? change.toFixed(2) : 0,
 									volume: volume > 10000 
 										? (volume/10000).toFixed(2) + '万' 
 										: volume.toFixed(2),
@@ -208,17 +198,7 @@ export default {
 					}
 					data.push(item)
 				}
-				const sortData = []
-				for (let n = 0; n < SORTS.length; n++) {
-					for (let z = 0; z < data.length; z++) {
-						if (data[z].name.split('/')[0].includes(SORTS[n])){
-							sortData.push(data[z])
-						}
-					}
-				}
-				this.tableData = sortData
-				!bool && Indicator.close()
-			}).catch(err => {
+				this.tableData = data
 				!bool && Indicator.close()
 			})
 		},
@@ -303,41 +283,6 @@ export default {
 .v-table-title-class
 	color #999
 	font-size 12px
-.platform-tab
-	position fixed
-	left 0
-	top 40px
-	z-index 9
-	width 100%
-	height 40px
-	background-color #ffffff
-	border 1px solid #dddddd
-	display flex
-	.platform-item
-		flex 1
-		&.mbaex-logo
-			height 100%
-			background-image url('../../assets/logo-mbaex.png')
-			background-repeat no-repeat
-			background-size 50%
-			background-position center
-		&.eunex-logo
-			height 100%
-			background-image url('../../assets/logo-eunex.png')
-			background-repeat no-repeat
-			background-size 50%
-			background-position center
-	.select-platform
-		position relative
-		&:after
-			content ''
-			display block
-			width 100%
-			height 3px
-			background-color #26a2ff
-			position absolute
-			left 0
-			bottom 0
 </style>
 
 <style lang="stylus" scoped>
@@ -352,7 +297,7 @@ export default {
 		top 0
 		left 0
 		right 0
-		padding-top 119px
+		padding-top 135px
 	.modal-info
 		display flex
 		width 100%
@@ -404,6 +349,14 @@ export default {
 		background-color #26a2ff
 		opacity 0.7
 		box-shadow 0 2px 4px rgba(0,0,0,.4)
+	.market-tab
+		position fixed
+		left 0
+		top 40px
+		z-index 9
+		width 100%
+		background-color #ffffff
+		border 1px solid #dddddd
 	.navbar
 		position fixed
 		left 0

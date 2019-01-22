@@ -2,11 +2,11 @@
     <div class="tabs">
         <div 
             class="item" 
-            :class="{'selected': selected == item}" 
+            :class="{'selected': selected == item.coinId}" 
             v-for="(item, i) in tabs" 
             :key="i" 
-            @click="select(item)">
-            {{item}}
+            @click="select(item.coinId)">
+            {{item.name}}
         </div>
     </div>
 </template>
