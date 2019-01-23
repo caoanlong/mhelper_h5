@@ -44,7 +44,7 @@ export default {
         display block
         height 1px
         width 100%
-        border-bottom 1px solid #dddddd
+        background-color #dddddd
         -webkit-transform-origin 0 100%
         transform-origin 0 100%
         -webkit-transform scaleY(0.5)

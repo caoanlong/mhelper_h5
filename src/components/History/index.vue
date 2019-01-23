@@ -348,14 +348,12 @@ export default {
 		position fixed
 		left 0
 		top 40px
-		z-index 9
+		z-index 999
 		width 100%
-		background-color #ffffff
-		border 1px solid #dddddd
 	.navbar
 		position fixed
 		left 0
-		top 76px
 		width 100%
-		z-index 9
+		z-index 999
+		top 76px
 </style>
