@@ -21,22 +21,20 @@
 					<span>更多</span>
 				</div>
 			</mt-header>
-			<ly-tab 
-				:isImg="true" 
+			<market-tab 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}"
 				class="market-tab" 
-				:items="markets" 
-				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
-				:options="{'labelKey': 'market', 'activeColor': '#1d98bd'}"
+				:tabs="markets" 
+				:selected="market" 
 				@change="changeMarket">
-			</ly-tab>
-			<ly-tab 
+			</market-tab>
+			<currency-tab 
+				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}"
 				class="navbar" 
-				v-model="selectedCurrency"
-				:items="currencys" 
-				:style="{'position': isScreenShot ? 'absolute' : 'fixed'}" 
-				:options="{'labelKey': 'currency', 'activeColor': '#1d98bd'}"
+				:tabs="currencys" 
+				:selected="currency" 
 				@change="changeCurrency">
-			</ly-tab>
+			</currency-tab>
 			<div id="coins">
 				<coin-item v-for="(item, i) in list" :key="i" :marketCoin="item"></coin-item>
 			</div>
@@ -76,13 +74,14 @@ import { Indicator, Toast, MessageBox } from 'mint-ui'
 import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import CoinItem from './components/CoinItem'
-import Tabs from '../Common/Tabs'
+import MarketTab from '../Common/MarketTab'
+import CurrencyTab from '../Common/CurrencyTab'
 import Coin from '../../api/Coin'
 import Market from '../../api/Market'
 import { saveHtml2Img } from '../../utils/common'
 export default {
 	name: "Home",
-	components: { CoinItem, Tabs },
+	components: { CoinItem, MarketTab, CurrencyTab },
 	data() {
 		return {
 			isScreenShot: false,
@@ -91,7 +90,6 @@ export default {
 			wait: 10,
 			canRefresh: true,
 			sheetVisible: false,
-			selectedCurrency: 0,
 			currency: '',
 			currencys: [],
 			market: '',
@@ -176,20 +174,18 @@ export default {
 			this.timeGo()
 			this.getCoinTickByCurrency()
 		},
-		changeMarket({ market }) {
+		changeMarket(market) {
 			this.market = market
 			this.getCurrencys()
 		},
-		changeCurrency({ currency }) {
+		changeCurrency(currency) {
 			this.currency = currency
 			this.getCoinTickByCurrency()
 		},
 		getMarkets() {
 			Market.getmarkets().then(res => {
 				this.market = res[0]
-				this.markets = res.map(market => {
-					return { market }
-				})
+				this.markets = res
 				this.getCurrencys()
 			})
 		},
@@ -197,11 +193,8 @@ export default {
 			Market.getcurrencys({
 				market: this.market
 			}).then(res => {
-				this.selectedCurrency = 0
 				this.currency = res[0]
-				this.currencys = res.map(currency => {
-					return { currency }
-				})
+				this.currencys = res
 				this.getCoinTickByCurrency()
 			})
 		},
@@ -298,7 +291,7 @@ export default {
 		top 0
 		left 0
 		right 0
-		padding-top 135px
+		padding-top 106px
 		padding-bottom 55px
 	.modal-info
 		display flex
@@ -385,13 +378,12 @@ export default {
 		top 40px
 		z-index 999
 		width 100%
-		background-color #ffffff
 	.navbar
 		position fixed
 		left 0
 		width 100%
 		z-index 999
-		top 88px
+		top 76px
 	.logo
 		display flex
 		align-items center
